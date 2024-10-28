@@ -1,3 +1,7 @@
 [theme]
-base="dark"
-font="monospace"
+base = "dark"
+primaryColor = "#f63366"       # Optional: Customize primary color
+backgroundColor = "#0e1117"    # Optional: Customize background color
+secondaryBackgroundColor = "#262730" # Optional: Customize secondary background color
+textColor = "#ffffff"           # Optional: Customize text color
+font = "sans serif"             # Sets the default font to Sans Serif
