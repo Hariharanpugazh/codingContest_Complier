@@ -4,7 +4,7 @@ from streamlit_ace import st_ace
 # Set page configuration to wide mode
 st.set_page_config(layout="wide")
 
-# Custom CSS to set font, control layout spacing, and add a border between columns
+# Custom CSS for layout and border between columns
 st.markdown(
     """
     <style>
@@ -12,23 +12,16 @@ st.markdown(
     html, body, [class*="css"] {
         font-family: "Sans-serif";
     }
-
-    /* Adjust padding for tighter alignment */
     .css-1d391kg, .css-18e3th9 {
         padding: 1rem 2rem;
     }
-    
-    /* Left and right column layout adjustments */
     .left-column {
         padding-right: 1rem;
-        border-right: 2px solid #3E3E3E; /* Border to differentiate columns */
+        border-right: 2px solid #3E3E3E;
     }
-    
     .right-column {
         padding-left: 1.5rem;
     }
-
-    /* Streamlined layout for button rows */
     .stButton { 
         margin-top: 0.5rem;
     }
@@ -37,41 +30,37 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Page Title
-
-# Create two columns with different width ratios for layout
+# Create two columns with different width ratios
 col1, col2 = st.columns([2, 3])
 
-# Left Column for Description, Examples, and Constraints
+# Left Column
 with col1:
-    with st.container():
-        st.write("### Description")
-        st.write("Given two binary strings `a` and `b`, return their sum as a binary string.")
+    st.write("### Description")
+    st.write("Given two binary strings `a` and `b`, return their sum as a binary string.")
 
-        st.write("### Examples")
-        st.markdown("""
-        **Example 1:**  
-        Input: `a = "11"`, `b = "1"`  
-        Output: `"100"`
+    st.write("### Examples")
+    st.markdown("""
+    **Example 1:**  
+    Input: `a = "11"`, `b = "1"`  
+    Output: `"100"`
 
-        **Example 2:**  
-        Input: `a = "1010"`, `b = "1011"`  
-        Output: `"10101"`
-        """)
+    **Example 2:**  
+    Input: `a = "1010"`, `b = "1011"`  
+    Output: `"10101"`
+    """)
 
-# Right Column for Code Editor and Test Cases
+# Right Column
 with col2:
-    # Code Editor
     st.write("### Code Editor")
     language = st.selectbox("Select Programming Language", ["python", "c_cpp", "java"], key="language")
-    
-    # Ace editor setup
+
+    # Ace editor setup with fixed height
     user_code = st_ace(
         language=language,
         theme="dracula",
         placeholder="Write your code here...",
         keybinding="vscode",
-        min_lines=15,
+        height=200,          # Set a fixed height in pixels
         font_size=16,
         show_gutter=True,
         show_print_margin=False,
