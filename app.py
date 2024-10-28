@@ -4,23 +4,28 @@ from streamlit_ace import st_ace
 # Set page configuration to wide mode
 st.set_page_config(layout="wide")
 
-# Custom CSS to adjust alignment and reduce spacing
+# Custom CSS to set font, control layout spacing, and add a border between columns
 st.markdown(
     """
     <style>
-    /* Overall page layout adjustments */
+    /* Set global font to Sans Serif */
+    html, body, [class*="css"] {
+        font-family: "Sans-serif";
+    }
+
+    /* Adjust padding for tighter alignment */
     .css-1d391kg, .css-18e3th9 {
         padding: 1rem 2rem;
     }
     
-    /* Left column layout adjustments */
+    /* Left and right column layout adjustments */
     .left-column {
-        padding-right: 2rem;
+        padding-right: 1rem;
+        border-right: 2px solid #3E3E3E; /* Border to differentiate columns */
     }
-
-    /* Right column layout adjustments */
+    
     .right-column {
-        padding-left: 2rem;
+        padding-left: 1.5rem;
     }
 
     /* Streamlined layout for button rows */
@@ -33,33 +38,26 @@ st.markdown(
 )
 
 # Page Title
-st.title("67. Add Binary")
 
 # Create two columns with different width ratios for layout
-col1, col2 = st.columns([3, 2])
+col1, col2 = st.columns([2, 3])
 
 # Left Column for Description, Examples, and Constraints
 with col1:
-    st.write("### Description")
-    st.write("Given two binary strings `a` and `b`, return their sum as a binary string.")
+    with st.container():
+        st.write("### Description")
+        st.write("Given two binary strings `a` and `b`, return their sum as a binary string.")
 
-    st.write("### Examples")
-    st.markdown("""
-    **Example 1:**  
-    Input: `a = "11"`, `b = "1"`  
-    Output: `"100"`
+        st.write("### Examples")
+        st.markdown("""
+        **Example 1:**  
+        Input: `a = "11"`, `b = "1"`  
+        Output: `"100"`
 
-    **Example 2:**  
-    Input: `a = "1010"`, `b = "1011"`  
-    Output: `"10101"`
-    """)
-
-    st.write("### Constraints")
-    st.markdown("""
-    - `1 <= a.length, b.length <= 10^4`
-    - `a` and `b` consist only of `'0'` or `'1'` characters.
-    - Each string does not contain leading zeros except for the zero itself.
-    """)
+        **Example 2:**  
+        Input: `a = "1010"`, `b = "1011"`  
+        Output: `"10101"`
+        """)
 
 # Right Column for Code Editor and Test Cases
 with col2:
