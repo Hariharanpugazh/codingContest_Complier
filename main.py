@@ -1,103 +1,210 @@
 import streamlit as st
 from streamlit_ace import st_ace
 import pandas as pd
+from typing import Tuple, Optional
 from utils import load_test_cases
 from api_handler import execute_code
 from config import API_URL, QUERY_STRING
 
-# Set page configuration to wide mode
-st.set_page_config(layout="wide")
-
-# Custom CSS for layout and border between columns
-st.markdown("""
-    <style>
-    html, body, [class*="css"] {
-        font-family: "Sans-serif";
-    }
-    .left-column { padding-right: 1rem; border-right: 2px solid #3E3E3E; }
-    .right-column { padding-left: 1.5rem; }
-    .stButton { margin-top: 0.5rem; }
-    .test-case-header { padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem; }
-    .description-box { padding: 1rem; border-radius: 0.5rem; border: 1px solid #e0e0e0; margin-bottom: 1rem; }
-    </style>
-""", unsafe_allow_html=True)
-
-# Create two columns with different width ratios
-col1, col2 = st.columns([2, 3])
-
-try:
-    # Load test cases
-    df = load_test_cases()
+class StreamlitApp:
+    def __init__(self):
+        self.setup_page_config()
+        self.load_custom_css()
+        self.df = None
     
-    # Left Column: Test Cases
-    with col1:
-        st.markdown("### Test Cases")
-        selected_row = st.selectbox(
-            "Select a problem to solve:",
-            options=range(len(df)),
-            format_func=lambda x: f"Problem {df.at[x, 'S.no']}: {df.at[x, 'Description']}"
+    @staticmethod
+    def setup_page_config():
+        st.set_page_config(
+            layout="wide",
+            page_title="Code Practice Platform",
+            page_icon="💻"
         )
-        st.session_state['selected_row'] = selected_row
-        
-        # Display selected test case details
+    
+    @staticmethod
+    def load_custom_css():
+        st.markdown("""
+            <style>
+            html, body, [class*="css"] {
+                font-family: "Sans-serif";
+            }
+            .left-column { 
+                padding-right: 1rem; 
+                border-right: 2px solid #3E3E3E; 
+            }
+            .right-column { 
+                padding-left: 1.5rem; 
+            }
+            .stButton { 
+                margin-top: 0.5rem; 
+            }
+            .test-case-header { 
+                padding: 1rem; 
+                border-radius: 0.5rem; 
+                margin-bottom: 1rem; 
+            }
+            .description-box { 
+                padding: 1rem; 
+                border-radius: 0.5rem; 
+                border: 1px solid #e0e0e0; 
+                margin-bottom: 1rem; 
+            }
+            .output-container {
+                margin-top: 1rem;
+                padding: 1rem;
+                border-radius: 0.5rem;
+                border: 1px solid #e0e0e0;
+            }
+            .error-message {
+                color: #ff4b4b;
+                padding: 0.5rem;
+                border-radius: 0.3rem;
+            }
+            .output-section {
+                margin-top: 1rem;
+                padding: 1rem;
+                border-radius: 0.5rem;
+                border: 1px solid #e0e0e0;
+            }
+            .output-comparison {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+                margin-top: 1rem;
+            }
+            </style>
+        """, unsafe_allow_html=True)
+    
+    def load_data(self) -> bool:
+        """Load test cases with error handling."""
+        try:
+            self.df = load_test_cases()
+            return True
+        except FileNotFoundError:
+            st.error("Error: testcases.csv file not found. Please ensure the file exists in the project directory.")
+            return False
+        except Exception as e:
+            st.error(f"Error loading test cases: {str(e)}")
+            return False
+
+    def render_problem_details(self, selected_row: int):
+        """Render the problem details section."""
         st.markdown('<div class="test-case-header">', unsafe_allow_html=True)
         st.markdown("### Problem Details")
-        st.markdown(f'<div class="description-box">{df.at[selected_row, "Description"]}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="description-box">{self.df.at[selected_row, "Description"]}</div>', 
+                   unsafe_allow_html=True)
         
-        # Display number of inputs and expected output
-        if df.at[selected_row, 'Has input']:
-            st.markdown(f'<div class="description-box">{int(df.at[selected_row, "No of inputs"])}</div>', unsafe_allow_html=True)
-            num_inputs = int(df.at[selected_row, 'No of inputs'])
+        if self.df.at[selected_row, 'Has input']:
+            num_inputs = int(self.df.at[selected_row, 'No of inputs'])
+            st.markdown("#### Input Format")
+            st.markdown(f'<div class="description-box">Number of inputs: {num_inputs}</div>', 
+                       unsafe_allow_html=True)
             for i in range(1, num_inputs + 1):
-                st.write(f"Input {i}: {df.at[selected_row, f'Input{i}']}")
+                st.markdown(f'Input {i}: `{self.df.at[selected_row, f"Input{i}"]}`')
         
-        st.markdown(f'<div class="description-box">{df.at[selected_row, "Output"]}</div>', unsafe_allow_html=True)
+        st.markdown("#### Expected Output")
+        st.markdown(f'<div class="description-box">{self.df.at[selected_row, "Output"]}</div>', 
+                   unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
-    # Right Column: Code Editor and Run
-    with col2:
-        st.markdown("### Code Editor")
-        language = st.selectbox("Select Programming Language", ["python", "c_cpp", "java"], key="language")
+    def get_user_inputs(self, selected_row: int) -> Optional[str]:
+        """Get and validate user inputs."""
+        if not self.df.at[selected_row, 'Has input']:
+            return ""
         
-        # Code editor
-        user_code = st_ace(
-            language=language,
-            theme="dracula",
-            placeholder="Write your code here...",
-            height=300,
-            font_size=16
-        )
+        num_inputs = int(self.df.at[selected_row, 'No of inputs'])
+        input_cols = st.columns(num_inputs)
+        input_fields = []
         
-        # Dynamic input fields for user input based on No of inputs
-        selected_row = st.session_state.get('selected_row', 0)
-        stdin_input = ""
-        if df.at[selected_row, 'Has input']:
-            num_inputs = int(df.at[selected_row, 'No of inputs'])
-            
-            # Arrange inputs in columns to match your UI
-            input_cols = st.columns(num_inputs)
-            input_fields = []
-            for i in range(1, num_inputs + 1):
-                with input_cols[i - 1]:
+        for i in range(1, num_inputs + 1):
+            with input_cols[i - 1]:
+                try:
+                    default_value = str(int(float(self.df.at[selected_row, f'Input{i}'])))
                     input_value = st.text_input(
                         f"Input {i}:",
-                        value=str(df.at[selected_row, f'Input{i}']),
+                        value=default_value,
                         key=f"input_{i}"
                     )
                     input_fields.append(input_value)
-            stdin_input = "\n".join(input_fields)
+                except ValueError:
+                    st.error(f"Invalid input format for Input {i}")
+                    return None
+        
+        return "\n".join(input_fields)
 
-        # Compile & Run button
-        if st.button("Compile & Run"):
-            output, expected_output = execute_code(user_code, language, stdin_input, selected_row, df)
-            st.write("### Output:")
-            if output == expected_output:
-                st.success("✅ Output matches expected result!")
-            else:
-                st.error("❌ Output doesn't match expected result")
-            st.code(output, language="text")
+    def display_output(self, output: str, expected_output: str):
+        """Display the output and expected output in a formatted way."""
+        st.markdown('<div class="output-section">', unsafe_allow_html=True)
+        
+        # Always display both outputs
+        st.markdown("#### Program Output:")
+        st.code(output, language="text")
+        st.markdown("#### Expected Output:")
+        st.code(expected_output, language="text")
+        
+        # Show match/mismatch status
+        if output == expected_output:
+            st.success("✅ Output matches expected result!")
+        else:
+            st.error("❌ Output doesn't match expected result")
+        
+        st.markdown('</div>', unsafe_allow_html=True)
 
-except FileNotFoundError:
-    st.error("Error: testcases.csv file not found.")
-except Exception as e:
-    st.error(f"Error loading test cases: {e}")
+    def run_code(self, user_code: str, language: str, stdin_input: str, selected_row: int):
+        """Execute the code and display results."""
+        if not user_code.strip():
+            st.error("Please enter code to execute.")
+            return
+
+        with st.spinner('Running your code...'):
+            try:
+                output, expected_output = execute_code(
+                    user_code, language, stdin_input, selected_row, self.df
+                )
+                self.display_output(output, expected_output)
+            except Exception as e:
+                st.error(f"Error executing code: {str(e)}")
+
+    def main(self):
+        """Main application flow."""
+        if not self.load_data():
+            return
+
+        col1, col2 = st.columns([2, 3])
+
+        with col1:
+            st.markdown("### Test Cases")
+            selected_row = st.selectbox(
+                "Select a problem to solve:",
+                options=range(len(self.df)),
+                format_func=lambda x: f"Problem {self.df.at[x, 'S.no']}: {self.df.at[x, 'Description'][:50]}..."
+            )
+            st.session_state['selected_row'] = selected_row
+            self.render_problem_details(selected_row)
+
+        with col2:
+            st.markdown("### Code Editor")
+            language = st.selectbox(
+                "Select Programming Language",
+                ["python", "c_cpp", "java"],
+                key="language"
+            )
+            
+            user_code = st_ace(
+                language=language,
+                theme="dracula",
+                placeholder="Write your code here...",
+                height=400,
+                font_size=16,
+                auto_update=True,
+                key=f"editor_{selected_row}"
+            )
+            
+            stdin_input = self.get_user_inputs(selected_row)
+            
+            if stdin_input is not None:
+                if st.button("Compile & Run", key=f"run_{selected_row}"):
+                    self.run_code(user_code, language, stdin_input, selected_row)
+
+if __name__ == "__main__":
+    app = StreamlitApp()
+    app.main()
