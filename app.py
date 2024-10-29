@@ -176,6 +176,29 @@ class StreamlitApp:
                             st.error("❌ Output doesn't match expected result.")
                     except Exception as e:
                         st.error(f"Error executing test case {i + 1}: {str(e)}")
+
+    def run_hidden_tests(self, user_code: str, language: str, selected_problem_index: int):
+        """Run hidden test cases and display results."""
+        hidden_samples = self.problems[selected_problem_index].get("hidden_samples", [])
+        failed_count = 0
+
+        for i, sample in enumerate(hidden_samples):
+            stdin_input = "\n".join([str(value) for value in sample["input"].values()])
+            expected_output = str(sample["output"])
+
+            try:
+                output, _ = execute_code(user_code, language, stdin_input, selected_problem_index, self.problems)
+                if output.strip() != expected_output.strip():
+                    failed_count += 1
+            except Exception as e:
+                failed_count += 1
+                st.error(f"Error executing hidden test case {i + 1}: {str(e)}")
+
+        if failed_count == 0:
+            st.success("✅ All hidden test cases cleared!")
+        else:
+            st.error(f"❌ {failed_count} hidden test case(s) failed.")
+
     def main(self):
         """Main application flow."""
         col1, col2 = st.columns([2, 3])
@@ -208,11 +231,16 @@ class StreamlitApp:
                 key=f"editor_{selected_problem_index}"
             )
 
-            # Only display test cases once after the "Compile & Run" button is clicked
-            if st.button("Compile & Run", key=f"run_{selected_problem_index}"):
-                self.run_code(user_code, language, selected_problem_index)
-            else:
-                # Display initial test cases without results
+            col2_1, col2_2 = st.columns(2)
+            with col2_1:
+                if st.button("Compile & Run", key=f"run_{selected_problem_index}"):
+                    self.run_code(user_code, language, selected_problem_index)
+            with col2_2:
+                if st.button("Submit", key=f"submit_{selected_problem_index}"):
+                    self.run_hidden_tests(user_code, language, selected_problem_index)
+
+            # Display initial test cases without results only
+            if not st.session_state.get(f"run_{selected_problem_index}"):
                 self.display_test_cases_section(selected_problem_index)
 
 
