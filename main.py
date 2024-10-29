@@ -2,7 +2,7 @@ import streamlit as st
 from streamlit_ace import st_ace
 import pandas as pd
 from typing import Tuple, Optional
-from utils import load_test_cases
+
 from api_handler import execute_code
 from config import API_URL, QUERY_STRING
 

@@ -5,114 +5,222 @@ st.set_page_config(layout="wide", page_title="Code Practice Platform", page_icon
 
 # The rest of your imports and code follows
 from streamlit_ace import st_ace
+from typing import Optional
+from api_handler import execute_code
+from config import API_URL, QUERY_STRING
+import json
 
-# Set page configuration to wide mode
-st.set_page_config(layout="wide")
-
-# Custom CSS to adjust alignment and reduce spacing
-st.markdown(
-    """
-    <style>
-    /* Overall page layout adjustments */
-    .css-1d391kg, .css-18e3th9 {
-        padding: 1rem 2rem;
-    }
+class StreamlitApp:
+    def __init__(self):
+        self.setup_page_config()
+        self.load_custom_css()
+        self.problems = self.load_json_test_cases()
     
-    /* Left column layout adjustments */
-    .left-column {
-        padding-right: 2rem;
-    }
-
-    /* Right column layout adjustments */
-    .right-column {
-        padding-left: 2rem;
-    }
-
-    /* Streamlined layout for button rows */
-    .stButton { 
-        margin-top: 0.5rem;
-    }
-    </style>
-    """, 
-    unsafe_allow_html=True
-)
-
-# Page Title
-st.title("67. Add Binary")
-
-# Create two columns with different width ratios for layout
-col1, col2 = st.columns([3, 2])
-
-# Left Column for Description, Examples, and Constraints
-with col1:
-    st.write("### Description")
-    st.write("Given two binary strings `a` and `b`, return their sum as a binary string.")
-
-    st.write("### Examples")
-    st.markdown("""
-    **Example 1:**  
-    Input: `a = "11"`, `b = "1"`  
-    Output: `"100"`
-
-    **Example 2:**  
-    Input: `a = "1010"`, `b = "1011"`  
-    Output: `"10101"`
-    """)
-
-    st.write("### Constraints")
-    st.markdown("""
-    - `1 <= a.length, b.length <= 10^4`
-    - `a` and `b` consist only of `'0'` or `'1'` characters.
-    - Each string does not contain leading zeros except for the zero itself.
-    """)
-
-# Right Column for Code Editor and Test Cases
-with col2:
-    # Code Editor
-    st.write("### Code Editor")
-    language = st.selectbox("Select Programming Language", ["python", "c_cpp", "java"], key="language")
+    @staticmethod
+    def setup_page_config():
+        st.set_page_config(
+            layout="wide",
+            page_title="Code Practice Platform",
+            page_icon="💻"
+        )
     
-    # Ace editor setup
-    user_code = st_ace(
-        language=language,
-        theme="dracula",
-        placeholder="Write your code here...",
-        keybinding="vscode",
-        min_lines=15,
-        font_size=16,
-        show_gutter=True,
-        show_print_margin=False,
-        wrap=True,
-        auto_update=True,
-        key="editor"
-    )
+    @staticmethod
+    def load_custom_css():
+        st.markdown("""
+            <style>
+            html, body, [class*="css"] {
+                font-family: "Sans-serif";
+            }
+            .left-column { 
+                padding-right: 1rem; 
+                border-right: 2px solid #3E3E3E; 
+            }
+            .right-column { 
+                padding-left: 1.5rem; 
+            }
+            .stButton { 
+                margin-top: 0.5rem; 
+            }
+            .test-case-header { 
+                padding: 1rem; 
+                border-radius: 0.5rem; 
+                margin-bottom: 1rem; 
+            }
+            .description-box { 
+                padding: 1rem; 
+                border-radius: 0.5rem; 
+                border: 1px solid #e0e0e0; 
+                margin-bottom: 1rem; 
+            }
+            .output-container {
+                margin-top: 1rem;
+                padding: 1rem;
+                border-radius: 0.5rem;
+                border: 1px solid #e0e0e0;
+            }
+            .error-message {
+                color: #ff4b4b;
+                padding: 0.5rem;
+                border-radius: 0.3rem;
+            }
+            .output-section {
+                margin-top: 1rem;
+                padding: 1rem;
+                border-radius: 0.5rem;
+                border: 1px solid #e0e0e0;
+            }
+            .output-comparison {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+                margin-top: 1rem;
+            }
+            </style>
+        """, unsafe_allow_html=True)
     
-    # Button Row: Compile & Run and Submit
-    col3, col4 = st.columns(2)
-    with col3:
-        if st.button("Compile & Run"):
-            st.write("### Output:")
-            # Placeholder output
-            st.write("Compiled and ran the code. (Placeholder for actual output)")
-    with col4:
-        if st.button("Submit"):
-            st.write("### Submitted Code:")
-            # Display the code from the editor
-            st.code(user_code, language=language)
+    @staticmethod
+    def load_json_test_cases():
+        """Load test cases from a JSON file."""
+        try:
+            with open("test_cases.json", "r") as file:
+                data = json.load(file)
+            return data.get("problems", [])
+        except FileNotFoundError:
+            st.error("Error: test_cases.json file not found. Please ensure the file exists in the project directory.")
+            return []
 
-    # Divider for Test Cases section
-    st.write("---")
+    def render_problem_details(self, selected_problem_index: int):
+        """Render the problem details section along with an example test case."""
+        problem = self.problems[selected_problem_index]
+        st.markdown('<div class="test-case-header">', unsafe_allow_html=True)
+        st.markdown("### Problem Details")
+        st.markdown(f'<div class="description-box">{problem["problem_statement"]}</div>', 
+                   unsafe_allow_html=True)
+        
+        # Display first sample test case as an example
+        st.markdown("### Example Test Case")
+        example_case = problem["samples"][0]  # First sample as example
+        st.write("#### Input")
+        for key, value in example_case["input"].items():
+            st.text(f"{key} = {value}")
+        
+        st.write("#### Expected Output")
+        st.text(example_case["output"])
 
-    # Test Cases
-    st.write("### Test Cases")
-    a = st.text_input("Enter binary string a:", "11", help="Binary string input for variable 'a'")
-    b = st.text_input("Enter binary string b:", "1", help="Binary string input for variable 'b'")
-    
-    if st.button("Run Test Case"):
-        # Binary addition logic
-        def add_binary(a, b):
-            return bin(int(a, 2) + int(b, 2))[2:]
+        st.markdown('</div>', unsafe_allow_html=True)
 
-        # Display result
-        result = add_binary(a, b)
-        st.write("**Output:**", result)
+    def get_user_inputs(self, selected_problem_index: int) -> Optional[str]:
+        """Get and validate user inputs."""
+        problem = self.problems[selected_problem_index]
+        example_case = problem["samples"][0]  # Use first sample as example
+        
+        input_fields = []
+        for i, (key, value) in enumerate(example_case["input"].items()):
+            input_value = st.text_input(
+                f"Input {i + 1} ({key}):",
+                value=str(value),
+                key=f"input_{selected_problem_index}_{i}"
+            )
+            input_fields.append(input_value)
+        
+        return "\n".join(input_fields)
+
+    def display_test_cases_section(self, selected_problem_index: int):
+        """Display test cases dynamically with the status of execution."""
+        st.markdown("### Testcase Results")
+
+        if self.problems:
+            samples = self.problems[selected_problem_index]["samples"]
+            tabs = st.tabs([f"Case {i + 1}" for i in range(len(samples))])
+
+            # Display initial input and expected output without result
+            for i, sample in enumerate(samples):
+                with tabs[i]:
+                    st.write("#### Input")
+                    for key, value in sample["input"].items():
+                        st.text(f"{key} = {value}")
+
+                    st.write("#### Expected Output")
+                    st.text(f"{sample['output']}")
+
+    def run_code(self, user_code: str, language: str, selected_problem_index: int):
+        """Execute each test case one by one, dynamically updating each result."""
+        if not user_code.strip():
+            st.error("Please enter code to execute.")
+            return
+
+        samples = self.problems[selected_problem_index]["samples"]
+        tabs = st.tabs([f"Case {i + 1}" for i in range(len(samples))])
+
+        # Execute each test case and display result in the corresponding tab
+        for i, sample in enumerate(samples):
+            with tabs[i]:
+                st.write("#### Input")
+                for key, value in sample["input"].items():
+                    st.text(f"{key} = {value}")
+
+                st.write("#### Expected Output")
+                st.text(f"{sample['output']}")
+
+                # Prepare input and expected output for the test case
+                stdin_input = "\n".join([str(value) for value in sample["input"].values()])
+                expected_output = str(sample["output"])
+
+                # Execute the code and display the output in real-time
+                with st.spinner(f'Running test case {i + 1}...'):
+                    try:
+                        output, _ = execute_code(user_code, language, stdin_input, selected_problem_index, self.problems)
+                        is_success = output.strip() == expected_output.strip()
+
+                        # Display the result dynamically
+                        st.write("#### Program Output")
+                        st.text(output.strip())
+                        if is_success:
+                            st.success("✅ Output matches expected result!")
+                        else:
+                            st.error("❌ Output doesn't match expected result.")
+                    except Exception as e:
+                        st.error(f"Error executing test case {i + 1}: {str(e)}")
+    def main(self):
+        """Main application flow."""
+        col1, col2 = st.columns([2, 3])
+
+        with col1:
+            st.markdown("### Test Cases")
+            selected_problem_index = st.selectbox(
+                "Select a problem to solve:",
+                options=range(len(self.problems)),
+                format_func=lambda x: f"{self.problems[x]['title']}: {self.problems[x]['problem_statement'][:50]}..."
+            )
+            st.session_state['selected_problem_index'] = selected_problem_index
+            self.render_problem_details(selected_problem_index)
+
+        with col2:
+            st.markdown("### Code Editor")
+            language = st.selectbox(
+                "Select Programming Language",
+                ["python", "c_cpp", "java"],
+                key="language"
+            )
+
+            user_code = st_ace(
+                language=language,
+                theme="dracula",
+                placeholder="Write your code here...",
+                height=400,
+                font_size=16,
+                auto_update=True,
+                key=f"editor_{selected_problem_index}"
+            )
+
+            # Only display test cases once after the "Compile & Run" button is clicked
+            if st.button("Compile & Run", key=f"run_{selected_problem_index}"):
+                self.run_code(user_code, language, selected_problem_index)
+            else:
+                # Display initial test cases without results
+                self.display_test_cases_section(selected_problem_index)
+
+
+if __name__ == "__main__":
+    app = StreamlitApp()
+    app.main()
