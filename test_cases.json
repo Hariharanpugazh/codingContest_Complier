@@ -1,0 +1,30 @@
+[
+    {
+        "problem_id": 1,
+        "description": "Write a program to add two numbers",
+        "test_cases": [
+            {
+                "inputs": [5, 3],
+                "expected_output": 8
+            },
+            {
+                "inputs": [10, 15],
+                "expected_output": 25
+            }
+        ]
+    },
+    {
+        "problem_id": 2,
+        "description": "Multiply two numbers",
+        "test_cases": [
+            {
+                "inputs": [4, 7],
+                "expected_output": 28
+            },
+            {
+                "inputs": [6, 9],
+                "expected_output": 54
+            }
+        ]
+    }
+]
