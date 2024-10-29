@@ -1,4 +1,5 @@
 .streamlit
 test.csv
 test_cases.csv
-__pychache__
+*.pyc
+
