@@ -99,39 +99,48 @@ class StreamlitApp:
             st.error(f"Error loading test cases: {str(e)}")
             return False
 
-    def render_problem_details(self, selected_problem_index: int):
-        """Render the problem details section along with an example test case."""
-        problem = self.problems[selected_problem_index]
+    def render_problem_details(self, selected_row: int):
+        """Render the problem details section."""
         st.markdown('<div class="test-case-header">', unsafe_allow_html=True)
         st.markdown("### Problem Details")
-        st.markdown(f'<div class="description-box">{problem["problem_statement"]}</div>', 
+        st.markdown(f'<div class="description-box">{self.df.at[selected_row, "Description"]}</div>', 
                    unsafe_allow_html=True)
         
-        # Display first sample test case as an example
-        st.markdown("### Example Test Case")
-        example_case = problem["samples"][0]  # First sample as example
-        st.write("#### Input")
-        for key, value in example_case["input"].items():
-            st.text(f"{key} = {value}")
+        if self.df.at[selected_row, 'Has input']:
+            num_inputs = int(self.df.at[selected_row, 'No of inputs'])
+            st.markdown("#### Input Format")
+            st.markdown(f'<div class="description-box">Number of inputs: {num_inputs}</div>', 
+                       unsafe_allow_html=True)
+            for i in range(1, num_inputs + 1):
+                st.markdown(f'Input {i}: `{self.df.at[selected_row, f"Input{i}"]}`')
         
-        st.write("#### Expected Output")
-        st.text(example_case["output"])
-
+        st.markdown("#### Expected Output")
+        st.markdown(f'<div class="description-box">{self.df.at[selected_row, "Output"]}</div>', 
+                   unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
-    def get_user_inputs(self, selected_problem_index: int) -> Optional[str]:
+    def get_user_inputs(self, selected_row: int) -> Optional[str]:
         """Get and validate user inputs."""
-        problem = self.problems[selected_problem_index]
-        example_case = problem["samples"][0]  # Use first sample as example
+        if not self.df.at[selected_row, 'Has input']:
+            return ""
         
+        num_inputs = int(self.df.at[selected_row, 'No of inputs'])
+        input_cols = st.columns(num_inputs)
         input_fields = []
-        for i, (key, value) in enumerate(example_case["input"].items()):
-            input_value = st.text_input(
-                f"Input {i + 1} ({key}):",
-                value=str(value),
-                key=f"input_{selected_problem_index}_{i}"
-            )
-            input_fields.append(input_value)
+        
+        for i in range(1, num_inputs + 1):
+            with input_cols[i - 1]:
+                try:
+                    default_value = str(int(float(self.df.at[selected_row, f'Input{i}'])))
+                    input_value = st.text_input(
+                        f"Input {i}:",
+                        value=default_value,
+                        key=f"input_{i}"
+                    )
+                    input_fields.append(input_value)
+                except ValueError:
+                    st.error(f"Invalid input format for Input {i}")
+                    return None
         
         return "\n".join(input_fields)
 
@@ -201,13 +210,13 @@ class StreamlitApp:
 
         with col1:
             st.markdown("### Test Cases")
-            selected_problem_index = st.selectbox(
+            selected_row = st.selectbox(
                 "Select a problem to solve:",
-                options=range(len(self.problems)),
-                format_func=lambda x: f"{self.problems[x]['title']}: {self.problems[x]['problem_statement'][:50]}..."
+                options=range(len(self.df)),
+                format_func=lambda x: f"Problem {self.df.at[x, 'S.no']}: {self.df.at[x, 'Description'][:50]}..."
             )
-            st.session_state['selected_problem_index'] = selected_problem_index
-            self.render_problem_details(selected_problem_index)
+            st.session_state['selected_row'] = selected_row
+            self.render_problem_details(selected_row)
 
         with col2:
             st.markdown("### Code Editor")
@@ -224,14 +233,14 @@ class StreamlitApp:
                 height=400,
                 font_size=16,
                 auto_update=True,
-                key=f"editor_{selected_problem_index}"
+                key=f"editor_{selected_row}"
             )
             
-            if st.button("Compile & Run", key=f"run_{selected_problem_index}"):
-                self.run_code(user_code, language, selected_problem_index)
+            if st.button("Compile & Run", key=f"run_{selected_row}"):
+                self.run_code(user_code, language, selected_row)
 
             # Display test cases without results initially
-            self.display_test_cases_section(selected_problem_index)
+            self.display_test_cases_section(selected_row)
 
 if __name__ == "__main__":
     app = StreamlitApp()
