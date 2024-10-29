@@ -1,8 +1,6 @@
 import streamlit as st
 from streamlit_ace import st_ace
-import pandas as pd
-from typing import Tuple, Optional
-from utils import load_test_cases
+from typing import Optional
 from api_handler import execute_code
 from config import API_URL, QUERY_STRING
 import json
@@ -11,7 +9,6 @@ class StreamlitApp:
     def __init__(self):
         self.setup_page_config()
         self.load_custom_css()
-        self.df = None
         self.problems = self.load_json_test_cases()
     
     @staticmethod
@@ -86,18 +83,6 @@ class StreamlitApp:
         except FileNotFoundError:
             st.error("Error: test_cases.json file not found. Please ensure the file exists in the project directory.")
             return []
-
-    def load_data(self) -> bool:
-        """Load test cases with error handling."""
-        try:
-            self.df = load_test_cases()
-            return True
-        except FileNotFoundError:
-            st.error("Error: testcases.csv file not found. Please ensure the file exists in the project directory.")
-            return False
-        except Exception as e:
-            st.error(f"Error loading test cases: {str(e)}")
-            return False
 
     def render_problem_details(self, selected_problem_index: int):
         """Render the problem details section along with an example test case."""
@@ -179,7 +164,7 @@ class StreamlitApp:
                 # Execute the code and display the output in real-time
                 with st.spinner(f'Running test case {i + 1}...'):
                     try:
-                        output, _ = execute_code(user_code, language, stdin_input, selected_problem_index, self.df)
+                        output, _ = execute_code(user_code, language, stdin_input, selected_problem_index, self.problems)
                         is_success = output.strip() == expected_output.strip()
 
                         # Display the result dynamically
@@ -191,12 +176,8 @@ class StreamlitApp:
                             st.error("❌ Output doesn't match expected result.")
                     except Exception as e:
                         st.error(f"Error executing test case {i + 1}: {str(e)}")
-
     def main(self):
         """Main application flow."""
-        if not self.load_data():
-            return
-
         col1, col2 = st.columns([2, 3])
 
         with col1:
@@ -216,7 +197,7 @@ class StreamlitApp:
                 ["python", "c_cpp", "java"],
                 key="language"
             )
-            
+
             user_code = st_ace(
                 language=language,
                 theme="dracula",
@@ -226,12 +207,14 @@ class StreamlitApp:
                 auto_update=True,
                 key=f"editor_{selected_problem_index}"
             )
-            
+
+            # Only display test cases once after the "Compile & Run" button is clicked
             if st.button("Compile & Run", key=f"run_{selected_problem_index}"):
                 self.run_code(user_code, language, selected_problem_index)
+            else:
+                # Display initial test cases without results
+                self.display_test_cases_section(selected_problem_index)
 
-            # Display test cases without results initially
-            self.display_test_cases_section(selected_problem_index)
 
 if __name__ == "__main__":
     app = StreamlitApp()
