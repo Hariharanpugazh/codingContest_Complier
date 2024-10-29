@@ -163,6 +163,33 @@ class StreamlitApp:
                 self.display_output(output, expected_output)
             except Exception as e:
                 st.error(f"Error executing code: {str(e)}")
+    def display_test_cases_section(self):
+        """Display the test cases section with multiple tabs."""
+        st.markdown("### Testcase")
+        
+        # Create tabs for each test case
+        tabs = st.tabs(["Case 1", "Case 2", "Case 3"])
+
+        # Test case 1
+        with tabs[0]:
+            st.write("nums =")
+            nums_1 = st.text_input("nums_case1", "[2, 7, 11, 15]", key="nums_case1")
+            st.write("target =")
+            target_1 = st.text_input("target_case1", "9", key="target_case1")
+        
+        # Test case 2
+        with tabs[1]:
+            st.write("nums =")
+            nums_2 = st.text_input("nums_case2", "[1, 5, 3, 6]", key="nums_case2")
+            st.write("target =")
+            target_2 = st.text_input("target_case2", "8", key="target_case2")
+        
+        # Test case 3
+        with tabs[2]:
+            st.write("nums =")
+            nums_3 = st.text_input("nums_case3", "[3, 2, 4]", key="nums_case3")
+            st.write("target =")
+            target_3 = st.text_input("target_case3", "6", key="target_case3")
 
     def main(self):
         """Main application flow."""
@@ -204,7 +231,7 @@ class StreamlitApp:
             if stdin_input is not None:
                 if st.button("Compile & Run", key=f"run_{selected_row}"):
                     self.run_code(user_code, language, stdin_input, selected_row)
-
+            self.display_test_cases_section()
 if __name__ == "__main__":
     app = StreamlitApp()
     app.main()
