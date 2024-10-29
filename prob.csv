@@ -1,0 +1,3 @@
+﻿S.no,Description,Input available ,No.of.inputs,A,B,Output
+1,"A phrase is a palindrome if, after converting all uppercase letters into lowercase letters and removing all non-alphanumeric characters, it reads the same forward and backward. Alphanumeric characters include letters and numbers.",Yes,1,MAM,,TRUE
+2,,,,,,
