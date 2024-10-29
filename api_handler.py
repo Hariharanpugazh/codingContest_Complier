@@ -1,6 +1,3 @@
-# import requests
-# import base64
-# from config import API_URL, HEADERS, QUERY_STRING
 import subprocess
 from typing import Tuple
 
@@ -15,7 +12,7 @@ def execute_code(user_code: str, language: str, inputs: str, test_case: dict) ->
         command = ["python", "-c", user_code] if language == "python" else ["your_language_interpreter"]
 
         # Join input list items into newline-separated string for each input
-        simulated_input = "\n".join(map(str, test_case["inputs"]))
+        simulated_input = "\n".join(map(str, inputs.split("\n")))
 
         # Run the process and pass the inputs as standard input
         process = subprocess.Popen(
