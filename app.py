@@ -77,7 +77,7 @@ class StreamlitApp:
     def load_json_test_cases():
         """Load test cases from a JSON file."""
         try:
-            with open("test_cases.json", "r") as file:
+            with open("json/test_cases.json", "r") as file:
                 data = json.load(file)
             return data.get("problems", [])
         except FileNotFoundError:
