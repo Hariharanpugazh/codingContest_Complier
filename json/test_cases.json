@@ -1,0 +1,169 @@
+{
+    "problems": [
+      {
+        "title": "Sum of Two Numbers",
+        "problem_statement": "Write a function that takes two numbers as input and returns their sum.",
+        "samples": [
+          {
+            "input": {
+              "a": 5,
+              "b": 3
+            },
+            "output": 8
+          },
+          {
+            "input": {
+              "a": 10,
+              "b": -5
+            },
+            "output": 5
+          }
+        ],
+        "hidden_samples": [
+          {
+            "input": {
+              "a": 100,
+              "b": 200
+            },
+            "output": 300
+          },
+          {
+            "input": {
+              "a": -10,
+              "b": -20
+            },
+            "output": -30
+          }
+        ]
+      },
+      {
+        "title": "Reverse a String",
+        "problem_statement": "Write a function that takes a string as input and returns the string in reverse.",
+        "samples": [
+          {
+            "input": {
+              "string": "hello"
+            },
+            "output": "olleh"
+          },
+          {
+            "input": {
+              "string": "world"
+            },
+            "output": "dlrow"
+          }
+        ],
+        "hidden_samples": [
+          {
+            "input": {
+              "string": "hidden"
+            },
+            "output": "nedih"
+          },
+          {
+            "input": {
+              "string": "reverse"
+            },
+            "output": "esrever"
+          }
+        ]
+      },
+      {
+        "title": "Find Maximum in List",
+        "problem_statement": "Write a function that takes a list of numbers and returns the maximum number.",
+        "samples": [
+          {
+            "input": {
+              "numbers": [3, 1, 9, 7]
+            },
+            "output": 9
+          },
+          {
+            "input": {
+              "numbers": [-1, -5, -3, -4]
+            },
+            "output": -1
+          }
+        ],
+        "hidden_samples": [
+          {
+            "input": {
+              "numbers": [10, 20, 5, 15]
+            },
+            "output": 20
+          },
+          {
+            "input": {
+              "numbers": [-10, -20, -30]
+            },
+            "output": -10
+          }
+        ]
+      },
+      {
+        "title": "Factorial of a Number",
+        "problem_statement": "Write a function that calculates the factorial of a given number.",
+        "samples": [
+          {
+            "input": {
+              "number": 5
+            },
+            "output": 120
+          },
+          {
+            "input": {
+              "number": 3
+            },
+            "output": 6
+          }
+        ],
+        "hidden_samples": [
+          {
+            "input": {
+              "number": 7
+            },
+            "output": 5040
+          },
+          {
+            "input": {
+              "number": 4
+            },
+            "output": 24
+          }
+        ]
+      },
+      {
+        "title": "Count Vowels in a String",
+        "problem_statement": "Write a function that takes a string as input and returns the number of vowels in the string.",
+        "samples": [
+          {
+            "input": {
+              "string": "example"
+            },
+            "output": 3
+          },
+          {
+            "input": {
+              "string": "programming"
+            },
+            "output": 3
+          }
+        ],
+        "hidden_samples": [
+          {
+            "input": {
+              "string": "hidden test"
+            },
+            "output": 3
+          },
+          {
+            "input": {
+              "string": "vowel count"
+            },
+            "output": 4
+          }
+        ]
+      }
+    ]
+  }
+  
