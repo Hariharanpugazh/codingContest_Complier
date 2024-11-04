@@ -3,6 +3,6 @@ from . import views
 
 urlpatterns = [
     path('compile/',views.compileCode,name='compile'),
-    path('compilehidden/',views.compileHidden,name='compile_hidden'),
+    path('submit/',views.compileHidden,name='compile_hidden'),
     path('userinput/', views.userInput, name='user_code'),
 ]
