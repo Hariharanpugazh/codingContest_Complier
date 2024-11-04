@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 # Define the path to the directory and file
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-CSV_DIR_PATH = os.path.join(BASE_DIR, 'contest_details', 'additional')
+CSV_DIR_PATH = os.path.join(BASE_DIR, 'contest_details', 'contest_csv')
 CSV_FILE_PATH = os.path.join(CSV_DIR_PATH, 'contest_details.csv')
 
 @csrf_exempt
