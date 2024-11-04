@@ -1,4 +1,3 @@
-import requests
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -13,7 +12,7 @@ def compileCode(request):
     if request.method == "POST":
         
         PROBLEMS_FILE_PATH = filepath.get_filepath()
-
+        
         print('PROBLEMS_FILE_PATH:',PROBLEMS_FILE_PATH)
 
         data = json.loads(request.body)
@@ -64,3 +63,39 @@ def userInput(request):
         return response
 
 
+@csrf_exempt
+def selectedProblems(request):
+    if request.method == "POST":
+        try:
+            # Parse the incoming JSON data
+            data = json.loads(request.body)
+            selected_ids = data.get('selected', [])
+
+            # Define the directory and file paths
+            directory = 'compile/jsonfiles'
+            questions_file = os.path.join(directory, 'questions.json')
+            selected_file = os.path.join(directory, 'selected.json')
+
+            # Load the questions.json file
+            if not os.path.exists(questions_file):
+                return JsonResponse({"error": "questions.json not found."}, status=404)
+
+            with open(questions_file, 'r') as f:
+                questions_data = json.load(f)
+
+            # Filter the problems based on the selected IDs
+            filtered_problems = [
+                problem for problem in questions_data.get('problems', [])
+                if problem['id'] in selected_ids
+            ]
+
+            # Save the filtered problems to selected.json
+            with open(selected_file, 'w') as f:
+                json.dump({'selected_problems': filtered_problems}, f, indent=4)
+
+            return JsonResponse({"message": "Selected problems saved successfully", "file": selected_file}, status=200)
+        
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
+    return JsonResponse({"error": "Invalid request method."}, status=405)
