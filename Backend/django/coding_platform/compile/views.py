@@ -18,10 +18,10 @@ def compileCode(request):
         data = json.loads(request.body)
         user_code = data.get('user_code', '')
         language = data.get('language', '')
-        selected_problem_index = data.get('selected_problem_index', 0)
+        problem_id = data.get('problem_id', 0)
 
         test_case = 'samples'
-        response = compile.compilecode(PROBLEMS_FILE_PATH, selected_problem_index, user_code, test_case, language)
+        response = compile.compilecode(PROBLEMS_FILE_PATH, problem_id, user_code, test_case, language)
         return response
 
     return JsonResponse({"error": "Invalid request method."}, status=405)
@@ -37,11 +37,11 @@ def compileHidden(request):
         data = json.loads(request.body)
         user_code = data.get('user_code', '')
         language = data.get('language', '')
-        selected_problem_index = data.get('selected_problem_index', 0)
+        problem_id = data.get('problem_id', 0)
         PROBLEMS_FILE_PATH = filepath.get_filepath()
 
         test_case = 'hidden_samples'
-        response = compile.compilecode(PROBLEMS_FILE_PATH, selected_problem_index, user_code, test_case, language)
+        response = compile.compilecode(PROBLEMS_FILE_PATH, problem_id, user_code, test_case, language)
         return response
 
     return JsonResponse({"error": "Invalid request method."}, status=405)

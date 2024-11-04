@@ -49,12 +49,12 @@ def compilation(source_code, input_data, expected_output, language):
     except Exception as e:
         return {"error": str(e)}
     
-def compilecode(PROBLEMS_FILE_PATH, selected_problem_index, user_code, test_case, language):
+def compilecode(PROBLEMS_FILE_PATH, problem_id, user_code, test_case, language):
 
     try:
         with open(PROBLEMS_FILE_PATH, 'r') as f:
             problems_data = json.load(f)
-        problem = problems_data["problems"][selected_problem_index]
+        problem = get_problem_by_id(problems_data, problem_id)
         samples = problem[test_case]
 
     except (IndexError, KeyError, FileNotFoundError):
@@ -107,3 +107,9 @@ def get_languageid(language):
     'TypeScript (3.7.4)': 74
 }
     return language_id[language]
+
+def get_problem_by_id(problems_data, problem_id):
+    for problem in problems_data["problems"]:
+        if problem["id"] == problem_id:
+            return problem
+    return None
