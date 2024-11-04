@@ -9,7 +9,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<CreateContest />} />
+        <Route path="/" element={<ContestPage />} />
         <Route path="/contest-challenges" element={<ContestChallenges />} />
         <Route path="/contest" element={<ContestPage />} />
       </Routes>

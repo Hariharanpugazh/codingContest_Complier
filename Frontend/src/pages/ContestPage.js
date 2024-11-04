@@ -46,7 +46,7 @@ function ContestPage() {
   // Handle Submit button click
   const handleSubmit = async () => {
     try {
-      const response = await axios.post('http://localhost:8000/compilehidden/', {
+      const response = await axios.post('http://localhost:8000/submit/', {
         user_code: code,
         language: language,
         selected_problem_index: selectedProblemId - 1,

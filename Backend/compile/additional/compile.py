@@ -11,7 +11,7 @@ def compilation(source_code, input_data, expected_output, language):
 
     try:
         headers = {
-            "x-rapidapi-key": "b1dfe04abcmsh9913f5c4cec3b70p1afb24jsnf8efde41a2ea",
+            "x-rapidapi-key": "9e24c55881mshcdcdd68192b062bp10dea0jsnb05b06d6a8ee",
             "x-rapidapi-host": "judge029.p.rapidapi.com",
             "Content-Type": "application/json"
         }
@@ -101,7 +101,7 @@ def get_languageid(language):
     'Plain Text': 43,
     'Prolog (GNU Prolog 1.4.5)': 69,
     'Python (2.7.17)': 70,
-    'Python (3.8.1)': 71,
+    'python': 71,
     'Ruby (2.7.0)': 72,
     'Rust (1.40.0)': 73,
     'TypeScript (3.7.4)': 74
