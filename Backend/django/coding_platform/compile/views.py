@@ -2,13 +2,8 @@ import requests
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
-import csv
-import json
-from django.core.files.storage import default_storage
 import os
 from .additional import compile, csvtojson, filepath
-
-
 
 
 # PROBLEMS_FILE_PATH = os.path.join('compile/jsonfiles', 'questions.json')
