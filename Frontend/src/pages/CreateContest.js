@@ -1,6 +1,7 @@
 // src/pages/CreateContest.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function CreateContest() {
   const navigate = useNavigate();
@@ -24,14 +25,40 @@ function CreateContest() {
     });
   };
 
-  const handleSubmit = (e) => {
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   // Perform any necessary form validation or data submission logic here
+
+  //   // Redirect to Contest Challenges page after form submission
+  //   navigate('/contest-challenges');
+  // };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Perform any necessary form validation or data submission logic here
-
-    // Redirect to Contest Challenges page after form submission
-    navigate('/contest-challenges');
+  
+    try {
+      const startDateTime = `${formData.startDate}T${formData.startTime}`;
+      const endDateTime = formData.noEndTime ? null : `${formData.endDate}T${formData.endTime}`;
+      
+      const response = await axios.post('http://localhost:8000/contestdetails/', {
+        contest_name: formData.contestName,
+        start_time: startDateTime,
+        end_time: endDateTime,
+        organization_type: formData.organizationType,
+        organization_name: formData.organizationName,
+      });
+      
+      alert('Details saved successfully!');
+      console.log('API response:', response.data);
+      
+      // Redirect to Contest Challenges page after successful submission
+      navigate('/AutoContest');
+    } catch (error) {
+      console.error('Error saving contest details:', error);
+      alert('There was an error saving the contest details. Please try again.');
+    }
   };
-
+  
   return (
     <div className="container mx-auto p-4 max-w-lg">
       <div className="bg-white shadow p-6 rounded-lg">

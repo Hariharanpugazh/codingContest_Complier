@@ -27,7 +27,7 @@ function ContestDetails() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/api/create_contest/', formData);
+      const response = await axios.post('/api/contestdetails/', formData);
       setSuccessMessage(response.data.message);
     } catch (error) {
       console.error("Error creating contest:", error);

@@ -2,5 +2,5 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('contestdetails/',views.saveDetails,name='save_details'),
+    path('autocontest/',views.userRole,name='save_details'),
 ]
