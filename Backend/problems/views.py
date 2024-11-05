@@ -24,7 +24,7 @@ def userRole(request):
         filtered_data = {"problems": filtered_problems}
         
         # Define path to save autoSelected.json in the Frontend directory
-        frontend_path = os.path.join(BASE_DIR, '../../../Frontend/public/json/autoSelected.json')
+        frontend_path = os.path.join(BASE_DIR, '../Frontend/public/json/autoSelected.json')
         
         # Ensure the Frontend directory exists (in case it was moved or deleted)
         # os.makedirs('Frontend', exist_ok=True)
