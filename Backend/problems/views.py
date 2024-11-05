@@ -18,7 +18,7 @@ def userRole(request):
             problems_data = json.load(file)
         
         # Filter problems based on the role
-        filtered_problems = [problem for problem in problems_data['problems'] if problem.get('role') == role]
+        filtered_problems = [problem for problem in problems_data['problems'] if role in problem.get('role')]
 
         # Prepare the data to save
         filtered_data = {"problems": filtered_problems}
