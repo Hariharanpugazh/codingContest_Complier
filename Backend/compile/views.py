@@ -16,9 +16,12 @@ def compileCode(request):
         print('PROBLEMS_FILE_PATH:',PROBLEMS_FILE_PATH)
 
         data = json.loads(request.body)
+        print('\n',data)
         user_code = data.get('user_code', '')
         language = data.get('language', '')
         problem_id = data.get('problem_id', 0)
+        problem_id = int(problem_id)
+        print(type(problem_id))
 
         test_case = 'samples'
         response = compile.compilecode(PROBLEMS_FILE_PATH, problem_id, user_code, test_case, language)
