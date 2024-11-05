@@ -56,12 +56,16 @@ def userRole(request):
         
         # Define path to save autoSelected.json in the Frontend directory
         frontend_path = os.path.join(BASE_DIR, '../Frontend/public/json/autoSelected.json')
+        backend_path = os.path.join(BASE_DIR, 'compile', 'jsonfiles', 'autoSelected.json')
         
         # Save the selected problems to autoSelected.json in the Frontend directory
         with open(frontend_path, 'w') as outfile:
             json.dump(filtered_data, outfile, indent=2)
+
+        with open(backend_path, 'w') as outfile:
+            json.dump(filtered_data, outfile, indent=2)
         
-        return JsonResponse({"message": "Filtered data saved to Frontend/public/json/autoSelected.json"})
+        return JsonResponse({"message": "Filtered data saved to Frontend/public/json/autoSelected.json and Backend/compile/jsonfiles/autoSelected.json"})
     
     return JsonResponse({"error": "Invalid request method."}, status=405)
 
