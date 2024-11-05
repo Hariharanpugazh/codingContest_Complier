@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { Navigate } from 'react-router-dom';
+import contest from './ContestPage'
+import { useNavigate } from 'react-router-dom';
 
 function CreateProfile() {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     name: '',
     role: '',
     skills: []
   });
   
-  const roles = ['Software Developer', 'Data Scientist', 'System Analyst', 'Project Manager', 'Network Engineer'];
+  const roles = ['Junior Software Developer', 'Senior Software Developer', 'AI Developer'];
   const skillsOptions = ['JavaScript', 'Python', 'React', 'Django', 'SQL', 'Java', 'Machine Learning', 'Cybersecurity'];
 
   const handleInputChange = (e) => {
@@ -40,7 +45,11 @@ function CreateProfile() {
       });
       alert('Test started successfully!');
       console.log('API response:', response.data);
-    } catch (error) {
+      navigate('/Contest');
+
+    } 
+    
+    catch (error) {
       console.error('Error starting test:', error);
       alert('There was an error starting the test. Please try again.');
     }
