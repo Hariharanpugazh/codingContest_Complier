@@ -17,7 +17,11 @@ function TestCaseSelection({ selectedProblem, onSelectProblem }) {
       <label className="text-lg font-semibold">Select a problem to solve:</label>
       <select
         value={selectedProblem}
-        onChange={(e) => onSelectProblem(e.target.value)}
+        onChange={(e) => {
+          const selectedId = parseInt(e.target.value, 10); // Convert to integer
+          console.log("Selected Problem ID:", selectedId);
+          onSelectProblem(selectedId);
+        }}
         className="w-full mt-2 p-2 border rounded"
       >
         {problems.map((problem) => (

@@ -17,6 +17,7 @@ function ContestPage() {
 
   // Handle problem selection
   const handleProblemSelect = (problemId) => {
+    console.log("Received Problem ID in ContestPage:", problemId);
     setSelectedProblemId(problemId);
   };
 

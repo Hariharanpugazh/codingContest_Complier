@@ -45,6 +45,7 @@ def compileHidden(request):
 
         test_case = 'hidden_samples'
         response = compile.compilecode(PROBLEMS_FILE_PATH, problem_id, user_code, test_case, language)
+        print("Response Content:", response.content.decode('utf-8'))
         return response
 
     return JsonResponse({"error": "Invalid request method."}, status=405)
