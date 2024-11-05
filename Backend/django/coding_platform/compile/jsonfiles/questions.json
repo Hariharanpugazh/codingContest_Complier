@@ -3,6 +3,7 @@
     {
       "id": 1,
       "title": "Sum of Two Numbers",
+      "role": "Junior Software Developer",
       "level": "easy",
       "problem_statement": "Write a function that takes two numbers as input and returns their sum.",
       "samples": [
@@ -29,6 +30,7 @@
     {
       "id": 2,
       "title": "Reverse a String",
+      "role": "Junior Software Developer",
       "level": "easy",
       "problem_statement": "Write a function that takes a string as input and returns the string in reverse.",
       "samples": [
@@ -55,6 +57,7 @@
     {
       "id": 3,
       "title": "Find Maximum in List",
+      "role": "Junior Software Developer",
       "level": "medium",
       "problem_statement": "Write a function that takes a list of numbers and returns the maximum number.",
       "samples": [
@@ -81,6 +84,7 @@
     {
       "id": 4,
       "title": "Factorial of a Number",
+      "role": "Senior Software Developer",
       "level": "medium",
       "problem_statement": "Write a function that calculates the factorial of a given number.",
       "samples": [
@@ -107,6 +111,7 @@
     {
       "id": 5,
       "title": "Count Vowels in a String",
+      "role": "Senior Software Developer",
       "level": "easy",
       "problem_statement": "Write a function that takes a string as input and returns the number of vowels in the string.",
       "samples": [
@@ -133,6 +138,7 @@
     {
       "id": 6,
       "title": "Check Prime Number",
+      "role": "Senior Software Developer",
       "level": "medium",
       "problem_statement": "Write a function that checks if a given number is a prime number.",
       "samples": [
@@ -159,6 +165,7 @@
     {
       "id": 7,
       "title": "Fibonacci Sequence",
+      "role": "Senior Software Developer",
       "level": "hard",
       "problem_statement": "Write a function that returns the nth Fibonacci number.",
       "samples": [
@@ -185,6 +192,7 @@
     {
       "id": 8,
       "title": "Palindrome Check",
+      "role": "AI Developer",
       "level": "easy",
       "problem_statement": "Write a function that checks if a given string is a palindrome.",
       "samples": [
@@ -211,6 +219,7 @@
     {
       "id": 9,
       "title": "Sum of Digits",
+      "role": "AI Developer",
       "level": "medium",
       "problem_statement": "Write a function that takes an integer and returns the sum of its digits.",
       "samples": [
@@ -237,6 +246,7 @@
     {
       "id": 10,
       "title": "Binary to Decimal Conversion",
+      "role": "AI Developer",
       "level": "medium",
       "problem_statement": "Write a function that converts a binary string to its decimal equivalent.",
       "samples": [
