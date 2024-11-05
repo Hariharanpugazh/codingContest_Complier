@@ -31,7 +31,7 @@ function ContestPage() {
       const response = await axios.post('http://localhost:8000/compile/', {
         user_code: code,
         language: language,
-        selected_problem_index: selectedProblemId - 1,
+        problem_id: selectedProblemId,
       });
 
       // Set the response data to testResults state to display in TestcaseResults
@@ -49,7 +49,7 @@ function ContestPage() {
       const response = await axios.post('http://localhost:8000/submit/', {
         user_code: code,
         language: language,
-        selected_problem_index: selectedProblemId - 1,
+        problem_id: selectedProblemId,
       });
 
       const results = response.data.results;

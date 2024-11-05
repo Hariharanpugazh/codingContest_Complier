@@ -1,0 +1,141 @@
+{
+    "problems": [
+        {
+            "id": 1,
+            "title": "Sum of Two Numbers",
+            "level": "easy",
+            "problem_statement": "Write a function that takes two numbers as input and returns their sum.",
+            "samples": [
+                {
+                    "input": [
+                        "5",
+                        " 3"
+                    ],
+                    "output": "8"
+                },
+                {
+                    "input": [
+                        "2",
+                        " 3"
+                    ],
+                    "output": "5"
+                },
+                {
+                    "input": [
+                        "100",
+                        " 200"
+                    ],
+                    "output": "300"
+                },
+                {
+                    "input": [
+                        "10",
+                        " -20"
+                    ],
+                    "output": "-30"
+                }
+            ],
+            "hidden_samples": [
+                {
+                    "input": [
+                        "-300",
+                        " 600"
+                    ],
+                    "output": "300"
+                },
+                {
+                    "input": [
+                        "1000",
+                        " 1000"
+                    ],
+                    "output": "2000"
+                },
+                {
+                    "input": [
+                        "-10",
+                        " -10"
+                    ],
+                    "output": "-20"
+                },
+                {
+                    "input": [
+                        "100",
+                        " -50"
+                    ],
+                    "output": "50"
+                },
+                {
+                    "input": [
+                        "250",
+                        " -150"
+                    ],
+                    "output": "100"
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "title": "Reverse a String",
+            "level": "easy",
+            "problem_statement": "Write a function that takes a string as input and returns the string in reverse.",
+            "samples": [
+                {
+                    "input": [
+                        "hello"
+                    ],
+                    "output": "olleh"
+                },
+                {
+                    "input": [
+                        "world"
+                    ],
+                    "output": "dlrow"
+                },
+                {
+                    "input": [
+                        "hidden"
+                    ],
+                    "output": "nedih"
+                },
+                {
+                    "input": [
+                        "reverse"
+                    ],
+                    "output": "esrever"
+                }
+            ],
+            "hidden_samples": [
+                {
+                    "input": [
+                        "function"
+                    ],
+                    "output": "noitcnuf"
+                },
+                {
+                    "input": [
+                        "input"
+                    ],
+                    "output": "tupni"
+                },
+                {
+                    "input": [
+                        "output"
+                    ],
+                    "output": "tuotuo"
+                },
+                {
+                    "input": [
+                        "structure"
+                    ],
+                    "output": "erutcurts"
+                },
+                {
+                    "input": [
+                        "data"
+                    ],
+                    "output": "atad"
+                }
+            ]
+        }
+    ]
+}

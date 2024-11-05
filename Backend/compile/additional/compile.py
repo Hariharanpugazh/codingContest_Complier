@@ -11,7 +11,7 @@ def compilation(source_code, input_data, expected_output, language):
 
     try:
         headers = {
-            "x-rapidapi-key": "9e24c55881mshcdcdd68192b062bp10dea0jsnb05b06d6a8ee",
+            "x-rapidapi-key": "b1dfe04abcmsh9913f5c4cec3b70p1afb24jsnf8efde41a2ea",
             "x-rapidapi-host": "judge029.p.rapidapi.com",
             "Content-Type": "application/json"
         }
