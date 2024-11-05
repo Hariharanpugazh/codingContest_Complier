@@ -1,0 +1,541 @@
+<<<<<<< HEAD:Backend/django/coding_platform/compile/jsonfiles/questions.json
+{
+  "problems": [
+    {
+      "id": 1,
+      "title": "Sum of Two Numbers",
+      "role": "Junior Software Developer",
+      "level": "easy",
+      "problem_statement": "Write a function that takes two numbers as input and returns their sum.",
+      "samples": [
+        {
+          "input": ["5", "3"],
+          "output": "8"
+        },
+        {
+          "input": ["10", "-5"],
+          "output": "5"
+        }
+      ],
+      "hidden_samples": [
+        {
+          "input": ["100", "200"],
+          "output": "300"
+        },
+        {
+          "input": ["-10", "-20"],
+          "output": "-30"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Reverse a String",
+      "role": "Junior Software Developer",
+      "level": "easy",
+      "problem_statement": "Write a function that takes a string as input and returns the string in reverse.",
+      "samples": [
+        {
+          "input": ["hello"],
+          "output": "olleh"
+        },
+        {
+          "input": ["world"],
+          "output": "dlrow"
+        }
+      ],
+      "hidden_samples": [
+        {
+          "input": ["hidden"],
+          "output": "nedih"
+        },
+        {
+          "input": ["reverse"],
+          "output": "esrever"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Find Maximum in List",
+      "role": "Junior Software Developer",
+      "level": "medium",
+      "problem_statement": "Write a function that takes a list of numbers and returns the maximum number.",
+      "samples": [
+        {
+          "input": [4,3, 1, 9, 7],
+          "output": 9
+        },
+        {
+          "input": [4,-1, -5, -3, -4],
+          "output": -1
+        }
+      ],
+      "hidden_samples": [
+        {
+          "input": [4, 10, 20, 5, 15],
+          "output": 20
+        },
+        {
+          "input": [4, -10, -20, -30],
+          "output": -10
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Factorial of a Number",
+      "role": "Senior Software Developer",
+      "level": "medium",
+      "problem_statement": "Write a function that calculates the factorial of a given number.",
+      "samples": [
+        {
+          "input": [5],
+          "output": 120
+        },
+        {
+          "input": [3],
+          "output": 6
+        }
+      ],
+      "hidden_samples": [
+        {
+          "input": [7],
+          "output": 5040
+        },
+        {
+          "input": [4],
+          "output": 24
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Count Vowels in a String",
+      "role": "Senior Software Developer",
+      "level": "easy",
+      "problem_statement": "Write a function that takes a string as input and returns the number of vowels in the string.",
+      "samples": [
+        {
+          "input": ["example"],
+          "output": 3
+        },
+        {
+          "input": ["programming"],
+          "output": 3
+        }
+      ],
+      "hidden_samples": [
+        {
+          "input": ["hidden test"],
+          "output": 3
+        },
+        {
+          "input": ["vowel count"],
+          "output": 4
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Check Prime Number",
+      "role": "Senior Software Developer",
+      "level": "medium",
+      "problem_statement": "Write a function that checks if a given number is a prime number.",
+      "samples": [
+        {
+          "input": [7],
+          "output": true
+        },
+        {
+          "input": [10],
+          "output": false
+        }
+      ],
+      "hidden_samples": [
+        {
+          "input": [23],
+          "output": true
+        },
+        {
+          "input": [25],
+          "output": false
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Fibonacci Sequence",
+      "role": "Senior Software Developer",
+      "level": "hard",
+      "problem_statement": "Write a function that returns the nth Fibonacci number.",
+      "samples": [
+        {
+          "input": [5],
+          "output": 5
+        },
+        {
+          "input": [7],
+          "output": 13
+        }
+      ],
+      "hidden_samples": [
+        {
+          "input": [10],
+          "output": 55
+        },
+        {
+          "input": [15],
+          "output": 610
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Palindrome Check",
+      "role": "AI Developer",
+      "level": "easy",
+      "problem_statement": "Write a function that checks if a given string is a palindrome.",
+      "samples": [
+        {
+          "input": ["madam"],
+          "output": true
+        },
+        {
+          "input": ["hello"],
+          "output": false
+        }
+      ],
+      "hidden_samples": [
+        {
+          "input": ["level"],
+          "output": true
+        },
+        {
+          "input": ["world"],
+          "output": false
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "title": "Sum of Digits",
+      "role": "AI Developer",
+      "level": "medium",
+      "problem_statement": "Write a function that takes an integer and returns the sum of its digits.",
+      "samples": [
+        {
+          "input": [123],
+          "output": 6
+        },
+        {
+          "input": [456],
+          "output": 15
+        }
+      ],
+      "hidden_samples": [
+        {
+          "input": [789],
+          "output": 24
+        },
+        {
+          "input": [101],
+          "output": 2
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "title": "Binary to Decimal Conversion",
+      "role": "AI Developer",
+      "level": "medium",
+      "problem_statement": "Write a function that converts a binary string to its decimal equivalent.",
+      "samples": [
+        {
+          "input": ["101"],
+          "output": 5
+        },
+        {
+          "input": ["1101"],
+          "output": 13
+        }
+      ],
+      "hidden_samples": [
+        {
+          "input": ["10010"],
+          "output": 18
+        },
+        {
+          "input": ["11111"],
+          "output": 31
+        }
+      ]
+    }
+  ]
+}
+=======
+{
+  "problems": [
+    {
+      "id": 1,
+      "title": "Sum of Two Numbers",
+      "level": "easy",
+      "problem_statement": "Write a function that takes two numbers as input and returns their sum.",
+      "samples": [
+        {
+          "input": ["5", "3"],
+          "output": "8"
+        },
+        {
+          "input": ["10", "-5"],
+          "output": "5"
+        }
+      ],
+      "hidden_samples": [
+        {
+          "input": ["100", "200"],
+          "output": "300"
+        },
+        {
+          "input": ["-10", "-20"],
+          "output": "-30"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Reverse a String",
+      "level": "easy",
+      "problem_statement": "Write a function that takes a string as input and returns the string in reverse.",
+      "samples": [
+        {
+          "input": ["hello"],
+          "output": "olleh"
+        },
+        {
+          "input": ["world"],
+          "output": "dlrow"
+        }
+      ],
+      "hidden_samples": [
+        {
+          "input": ["hidden"],
+          "output": "nedih"
+        },
+        {
+          "input": ["reverse"],
+          "output": "esrever"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Find Maximum in List",
+      "level": "medium",
+      "problem_statement": "Write a function that takes a list of numbers and returns the maximum number.",
+      "samples": [
+        {
+          "input": [4,3, 1, 9, 7],
+          "output": 9
+        },
+        {
+          "input": [4,-1, -5, -3, -4],
+          "output": -1
+        }
+      ],
+      "hidden_samples": [
+        {
+          "input": [4, 10, 20, 5, 15],
+          "output": 20
+        },
+        {
+          "input": [4, -10, -20, -30],
+          "output": -10
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Factorial of a Number",
+      "level": "medium",
+      "problem_statement": "Write a function that calculates the factorial of a given number.",
+      "samples": [
+        {
+          "input": [5],
+          "output": 120
+        },
+        {
+          "input": [3],
+          "output": 6
+        }
+      ],
+      "hidden_samples": [
+        {
+          "input": [7],
+          "output": 5040
+        },
+        {
+          "input": [4],
+          "output": 24
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Count Vowels in a String",
+      "level": "easy",
+      "problem_statement": "Write a function that takes a string as input and returns the number of vowels in the string.",
+      "samples": [
+        {
+          "input": ["example"],
+          "output": 3
+        },
+        {
+          "input": ["programming"],
+          "output": 3
+        }
+      ],
+      "hidden_samples": [
+        {
+          "input": ["hidden test"],
+          "output": 3
+        },
+        {
+          "input": ["vowel count"],
+          "output": 4
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Check Prime Number",
+      "level": "medium",
+      "problem_statement": "Write a function that checks if a given number is a prime number.",
+      "samples": [
+        {
+          "input": [7],
+          "output": true
+        },
+        {
+          "input": [10],
+          "output": false
+        }
+      ],
+      "hidden_samples": [
+        {
+          "input": [23],
+          "output": true
+        },
+        {
+          "input": [25],
+          "output": false
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Fibonacci Sequence",
+      "level": "hard",
+      "problem_statement": "Write a function that returns the nth Fibonacci number.",
+      "samples": [
+        {
+          "input": [5],
+          "output": 5
+        },
+        {
+          "input": [7],
+          "output": 13
+        }
+      ],
+      "hidden_samples": [
+        {
+          "input": [10],
+          "output": 55
+        },
+        {
+          "input": [15],
+          "output": 610
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Palindrome Check",
+      "level": "easy",
+      "problem_statement": "Write a function that checks if a given string is a palindrome.",
+      "samples": [
+        {
+          "input": ["madam"],
+          "output": true
+        },
+        {
+          "input": ["hello"],
+          "output": false
+        }
+      ],
+      "hidden_samples": [
+        {
+          "input": ["level"],
+          "output": true
+        },
+        {
+          "input": ["world"],
+          "output": false
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "title": "Sum of Digits",
+      "level": "medium",
+      "problem_statement": "Write a function that takes an integer and returns the sum of its digits.",
+      "samples": [
+        {
+          "input": [123],
+          "output": 6
+        },
+        {
+          "input": [456],
+          "output": 15
+        }
+      ],
+      "hidden_samples": [
+        {
+          "input": [789],
+          "output": 24
+        },
+        {
+          "input": [101],
+          "output": 2
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "title": "Binary to Decimal Conversion",
+      "level": "medium",
+      "problem_statement": "Write a function that converts a binary string to its decimal equivalent.",
+      "samples": [
+        {
+          "input": ["101"],
+          "output": 5
+        },
+        {
+          "input": ["1101"],
+          "output": 13
+        }
+      ],
+      "hidden_samples": [
+        {
+          "input": ["10010"],
+          "output": 18
+        },
+        {
+          "input": ["11111"],
+          "output": 31
+        }
+      ]
+    }
+  ]
+}
+>>>>>>> 0ff863994d41a0e628cdce9ffb38d65a4e9ce576:Frontend/public/json/questions.json
