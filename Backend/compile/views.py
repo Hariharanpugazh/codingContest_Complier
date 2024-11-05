@@ -5,15 +5,15 @@ import os
 from .additional import compile, csvtojson, filepath
 
 
-# PROBLEMS_FILE_PATH = os.path.join('compile/jsonfiles', 'questions.json')
+PROBLEMS_FILE_PATH = os.path.join('compile/jsonfiles', 'questions.json')
 
 @csrf_exempt
 def compileCode(request):
     if request.method == "POST":
         
-        PROBLEMS_FILE_PATH = filepath.get_filepath()
+        # PROBLEMS_FILE_PATH = filepath.get_filepath()
         
-        print('PROBLEMS_FILE_PATH:',PROBLEMS_FILE_PATH)
+        # print('PROBLEMS_FILE_PATH:',PROBLEMS_FILE_PATH)
 
         data = json.loads(request.body)
         user_code = data.get('user_code', '')
@@ -30,9 +30,9 @@ def compileCode(request):
 def compileHidden(request):
     if request.method == "POST":
 
-        PROBLEMS_FILE_PATH = filepath.get_filepath()
+        # PROBLEMS_FILE_PATH = filepath.get_filepath()
 
-        print('PROBLEMS_FILE_PATH:',PROBLEMS_FILE_PATH)
+        # print('PROBLEMS_FILE_PATH:',PROBLEMS_FILE_PATH)
 
         data = json.loads(request.body)
         user_code = data.get('user_code', '')
