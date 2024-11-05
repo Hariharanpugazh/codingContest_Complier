@@ -5,7 +5,7 @@ import os
 from .additional import compile, csvtojson, filepath
 
 
-PROBLEMS_FILE_PATH = os.path.join('compile/jsonfiles', 'autoSelected.json')
+PROBLEMS_FILE_PATH = os.path.join('compile/jsonfiles', 'questions.json')
 
 @csrf_exempt
 def compileCode(request):
