@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "compile",
+    "problems",
+    "contest_details",
     "corsheaders",  # Add this line
 ]
 
