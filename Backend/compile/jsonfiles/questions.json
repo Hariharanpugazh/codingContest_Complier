@@ -62,7 +62,7 @@
       "problem_statement": "Write a function that takes a list of numbers and returns the maximum number.",
       "samples": [
         {
-          "input": [4,3, 1, 9, 7],
+          "input": [8,3, 1, 9, 7],
           "output": 9
         },
         {
