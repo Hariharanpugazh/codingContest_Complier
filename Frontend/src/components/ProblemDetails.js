@@ -6,13 +6,16 @@ function ProblemDetails({ selectedProblemId }) {
 
   // Load JSON data and find the selected problem
   useEffect(() => {
-    fetch('/json/questions.json')
+    fetch('/json/autoSelected.json')
       .then((response) => response.json())
       .then((data) => {
         const selectedProblem = data.problems.find(
           (problem) => problem.id === parseInt(selectedProblemId)
+          
         );
+        console.log("geted")
         setProblem(selectedProblem);
+        console.log(setProblem(selectedProblem))
       })
       .catch((error) => console.error("Error loading JSON:", error));
   }, [selectedProblemId]);

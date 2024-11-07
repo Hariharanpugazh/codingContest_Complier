@@ -5,13 +5,18 @@ import CreateContest from './pages/CreateContest';
 import ContestChallenges from './pages/ContestChallenges';
 import ContestPage from './pages/ContestPage';
 import AutoContest from './pages/AutoContest';
-
+import SelectTestOption from './pages/SelectTestOption';
+import FileUpload from './pages/FileUpload';
+import ManualSelectUI from './pages/ManualSelectUI'
 function App() {
   return (
     <Router>
       <Routes>
         {/* <Route path="/" element={<AutoContest></AutoContest>}/> */}
         <Route path="/" element={<CreateContest />} />
+        <Route path="/SelectTestOption" element={<SelectTestOption />}/>
+        <Route path="/FileUpload" element={<FileUpload />} />
+        <Route path="/ManualSelectUI" element={<ManualSelectUI />} />
         <Route path="/AutoContest" element={<AutoContest />} />
         <Route path="/contest" element={<ContestPage />} />
       </Routes>

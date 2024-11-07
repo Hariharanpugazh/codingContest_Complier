@@ -13,7 +13,7 @@ def csv_to_json(csv_file, output_json_path):
         reader = csv.DictReader(csvfile)  # Use DictReader for easier column access
 
         # Validate CSV headers
-        expected_headers = {'id', 'title', 'level', 'problem_statement'}
+        expected_headers = {'id', 'title', 'level', 'problem_statement',}
         if not expected_headers.issubset(reader.fieldnames):
             return JsonResponse({'error': 'CSV missing required headers'}, status=400)
 
@@ -24,7 +24,8 @@ def csv_to_json(csv_file, output_json_path):
                 'level': row['level'],
                 'problem_statement': row['problem_statement'],
                 'samples': [],
-                'hidden_samples': []
+                'hidden_samples': [],
+                # 'marks':int(row['marks'])
             }
 
             # Append sample inputs and outputs

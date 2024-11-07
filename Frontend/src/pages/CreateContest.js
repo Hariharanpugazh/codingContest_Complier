@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import SelectTestOption from './SelectTestOption'
 
 function CreateContest() {
   const navigate = useNavigate();
@@ -52,7 +53,7 @@ function CreateContest() {
       console.log('API response:', response.data);
       
       // Redirect to Contest Challenges page after successful submission
-      navigate('/AutoContest');
+      navigate('/SelectTestOption');
     } catch (error) {
       console.error('Error saving contest details:', error);
       alert('There was an error saving the contest details. Please try again.');

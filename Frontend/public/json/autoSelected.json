@@ -1,3 +1,30 @@
 {
-  "problems": []
+  "problems": [
+    {
+      "id": 2,
+      "title": "Reverse a String",
+      "level": "easy",
+      "problem_statement": "Write a function that takes a string as input and returns the string in reverse.",
+      "samples": [
+        {
+          "input": ["hello"],
+          "output": "olleh"
+        },
+        {
+          "input": ["world"],
+          "output": "dlrow"
+        }
+      ],
+      "hidden_samples": [
+        {
+          "input": ["hidden"],
+          "output": "nedih"
+        },
+        {
+          "input": ["reverse"],
+          "output": "esrever"
+        }
+      ]
+    }
+  ]
 }
