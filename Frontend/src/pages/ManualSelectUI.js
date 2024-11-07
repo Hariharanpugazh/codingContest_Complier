@@ -5,6 +5,8 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
+import PreviewButton from '../components/previewButton';
+
 const roles = [
   "Junior Developer",
   "Senior Developer",
@@ -21,6 +23,19 @@ const ProblemForm = () => {
     description: '',
     level: '',
   });
+
+  // Function to load problem data for modification
+  const loadProblemData = (problem) => {
+    setProblemData({
+      id: problem.id,
+      title: problem.title,
+      description: problem.problem_statement,
+      level: problem.level.charAt(0).toUpperCase() + problem.level.slice(1),
+    });
+    setSelectedRoles(problem.role || []);
+    setTestCases(problem.samples && Array.isArray(problem.samples) ? problem.samples : [{ inputs: [''], output: '' }]);
+    setHiddenTestCases(problem.hidden_samples && Array.isArray(problem.hidden_samples) ? problem.hidden_samples : [{ inputs: [''], output: '' }]);
+  };
 
   const handleAddTestCase = (isHidden = false) => {
     const cases = isHidden ? hiddenTestCases : testCases;
@@ -50,56 +65,49 @@ const ProblemForm = () => {
     setProblemData((prevData) => ({ ...prevData, [field]: value }));
   };
 
+  const saveProblemAsJson = async () => {
+    const problemJson = {
+      problems: [
+        {
+          id: parseInt(problemData.id, 10),
+          title: problemData.title,
+          role: selectedRoles,
+          level: problemData.level.toLowerCase(),
+          problem_statement: problemData.description,
+          samples: testCases.map((testCase) => ({
+            input: testCase.inputs.map(input => `${input}`),
+            output: `${testCase.output}`
+          })),
+          hidden_samples: hiddenTestCases.map((hiddenTestCase) => ({
+            input: hiddenTestCase.inputs.map(input => `${input}`),
+            output: `${hiddenTestCase.output}`
+          }))
+        }
+      ]
+    };
 
-
-// const saveProblemAsJson = async () => {
-//   const problemJson = {
-//     problems: [
-//       {
-//         id: parseInt(problemData.id, 10),
-//         title: problemData.title,
-//         role: selectedRoles,
-//         level: problemData.level.toLowerCase(),
-//         problem_statement: problemData.description,
-//         samples: testCases.map((testCase) => ({
-//           input: testCase.inputs.map(input => `${input}`),
-//           output: `${testCase.output}`
-//         })),
-//         hidden_samples: hiddenTestCases.map((hiddenTestCase) => ({
-//           input: hiddenTestCase.inputs.map(input => `${input}`),
-//           output: `${hiddenTestCase.output}`
-//         }))
-//       }
-//     ]
-//   };
-
-//   try {
-//     // Send JSON data to the backend
-//     const response = await axios.post('http://localhost:5000/api/save-problem', problemJson);
-//     toast.success(response.data.message, {
-//       position: "top-right",
-//       autoClose: 3000,
-//       hideProgressBar: false,
-//       closeOnClick: true,
-//       pauseOnHover: true,
-//       draggable: true,
-//     });
-//   } catch (error) {
-//     console.error('Failed to save problem data:', error);
-//     toast.error('Failed to save problem data.', {
-//       position: "top-right",
-//       autoClose: 3000,
-//       hideProgressBar: false,
-//       closeOnClick: true,
-//       pauseOnHover: true,
-//       draggable: true,
-//     });
-//   }
-// };
-
-  
-  
-  
+    try {
+      const response = await axios.post('http://localhost:8000/manualProblems/', problemJson);
+      toast.success(response.data.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    } catch (error) {
+      console.error('Failed to save problem data:', error);
+      toast.error('Failed to save problem data.', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
+  };
 
   return (
     <Box p={3} bgcolor="#f9f9f9" borderRadius={2} boxShadow={3} maxWidth="90%" mx="auto">
@@ -313,14 +321,12 @@ const ProblemForm = () => {
           </Box>
         </Grid>
       </Grid>
-      {/* onClick={saveProblemAsJson} */}
+      
       <Box display="flex" justifyContent="space-between" mt={4}>
-        <Button  variant="contained" color="primary">
+        <Button variant="contained" onClick={saveProblemAsJson} color="primary">
           Save
         </Button>
-        <Button variant="contained" color="secondary">
-          Next
-        </Button>
+        <PreviewButton onEditProblem={loadProblemData} />
       </Box>
 
       <ToastContainer />

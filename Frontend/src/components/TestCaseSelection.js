@@ -6,7 +6,7 @@ function TestCaseSelection({ selectedProblem, onSelectProblem }) {
 
   // Load JSON data
   useEffect(() => {
-    fetch('/json/autoSelected.json')
+    fetch('/json/questions.json')
       .then((response) => response.json())
       .then((data) => setProblems(data.problems))
       .catch((error) => console.error("Error loading JSON:", error));

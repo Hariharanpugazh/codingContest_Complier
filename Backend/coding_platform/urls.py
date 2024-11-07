@@ -22,4 +22,5 @@ urlpatterns = [
     path("",include('compile.urls')),
     path("",include('contest_details.urls')),
     path("",include('problems.urls')),
+    path("",include('manualProblems.urls')),
 ]

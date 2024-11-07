@@ -6,7 +6,7 @@ function ProblemDetails({ selectedProblemId }) {
 
   // Load JSON data and find the selected problem
   useEffect(() => {
-    fetch('/json/autoSelected.json')
+    fetch('/json/questions.json')
       .then((response) => response.json())
       .then((data) => {
         const selectedProblem = data.problems.find(

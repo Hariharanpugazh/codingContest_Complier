@@ -2,12 +2,16 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import CreateContest from './pages/CreateContest';
-import ContestChallenges from './pages/ContestChallenges';
 import ContestPage from './pages/ContestPage';
 import AutoContest from './pages/AutoContest';
 import SelectTestOption from './pages/SelectTestOption';
 import FileUpload from './pages/FileUpload';
 import ManualSelectUI from './pages/ManualSelectUI'
+
+import ContestChallenges from './pages/ContestChallenges';
+
+
+
 function App() {
   return (
     <Router>
