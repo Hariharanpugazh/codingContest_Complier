@@ -7,11 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import PreviewButton from '../components/previewButton';
 
-const roles = [
-  "Junior Developer",
-  "Senior Developer",
-  "AI Developer"
-];
+const roles = ["Junior Developer", "Senior Developer", "AI Developer"];
 
 const ProblemForm = () => {
   const [testCases, setTestCases] = useState([{ inputs: [''], output: '' }]);
@@ -27,14 +23,33 @@ const ProblemForm = () => {
   // Function to load problem data for modification
   const loadProblemData = (problem) => {
     setProblemData({
-      id: problem.id,
-      title: problem.title,
-      description: problem.problem_statement,
-      level: problem.level.charAt(0).toUpperCase() + problem.level.slice(1),
+      id: problem.id || '',
+      title: problem.title || '',
+      description: problem.problem_statement || '',
+      level: problem.level ? problem.level.charAt(0).toUpperCase() + problem.level.slice(1) : '',
     });
+
     setSelectedRoles(problem.role || []);
-    setTestCases(problem.samples && Array.isArray(problem.samples) ? problem.samples : [{ inputs: [''], output: '' }]);
-    setHiddenTestCases(problem.hidden_samples && Array.isArray(problem.hidden_samples) ? problem.hidden_samples : [{ inputs: [''], output: '' }]);
+
+    // Safely set test cases, ensuring each has the necessary structure
+    setTestCases(
+      problem.samples && Array.isArray(problem.samples) && problem.samples.length > 0
+        ? problem.samples.map(testCase => ({
+            inputs: testCase.input ? [...testCase.input] : [''], // Ensuring inputs is an array
+            output: testCase.output || ''
+          }))
+        : [{ inputs: [''], output: '' }]
+    );
+
+    // Safely set hidden test cases, ensuring each has the necessary structure
+    setHiddenTestCases(
+      problem.hidden_samples && Array.isArray(problem.hidden_samples) && problem.hidden_samples.length > 0
+        ? problem.hidden_samples.map(hiddenTestCase => ({
+            inputs: hiddenTestCase.input ? [...hiddenTestCase.input] : [''], // Ensuring inputs is an array
+            output: hiddenTestCase.output || ''
+          }))
+        : [{ inputs: [''], output: '' }]
+    );
   };
 
   const handleAddTestCase = (isHidden = false) => {
@@ -145,12 +160,12 @@ const ProblemForm = () => {
           />
           <Box mt={2}>
             <Typography variant="h6">Test Cases</Typography>
-            {testCases.map((testCase, testCaseIndex) => (
+            {testCases && testCases.map((testCase, testCaseIndex) => (
               <Box key={testCaseIndex} mb={2} p={2} border="1px solid #ddd" borderRadius={1}>
                 <Typography variant="subtitle1" gutterBottom>
                   Test Case {testCaseIndex + 1}
                 </Typography>
-                {testCase.inputs.map((input, inputIndex) => (
+                {testCase.inputs && testCase.inputs.map((input, inputIndex) => (
                   <Box display="flex" alignItems="center" key={inputIndex}>
                     <TextField
                       fullWidth
@@ -250,12 +265,12 @@ const ProblemForm = () => {
           </TextField>
           <Box mt={2}>
             <Typography variant="h6">Hidden Test Cases</Typography>
-            {hiddenTestCases.map((hiddenTestCase, hiddenTestCaseIndex) => (
+            {hiddenTestCases && hiddenTestCases.map((hiddenTestCase, hiddenTestCaseIndex) => (
               <Box key={hiddenTestCaseIndex} mb={2} p={2} border="1px solid #ddd" borderRadius={1}>
                 <Typography variant="subtitle1" gutterBottom>
                   Hidden Test Case {hiddenTestCaseIndex + 1}
                 </Typography>
-                {hiddenTestCase.inputs.map((input, inputIndex) => (
+                {hiddenTestCase.inputs && hiddenTestCase.inputs.map((input, inputIndex) => (
                   <Box display="flex" alignItems="center" key={inputIndex}>
                     <TextField
                       fullWidth

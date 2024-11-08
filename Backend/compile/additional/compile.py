@@ -1,74 +1,101 @@
-import requests
-from django.http import JsonResponse
 import json
-
-API_URL = "https://judge029.p.rapidapi.com/submissions"
+import subprocess
+import tempfile
+import os
+from django.http import JsonResponse
 
 
 def compilation(source_code, input_data, expected_output, language):
-
-    language_id = get_languageid(language)
-
     try:
-        headers = {
-            "x-rapidapi-key": "4c6f0f6fc5msh9ca8144c4f547fep16ac54jsndd5114267fd4",
-            "x-rapidapi-host": "judge029.p.rapidapi.com",
-            "Content-Type": "application/json"
-        }
+        # Determine the file extension based on language
+        ext = {'python': 'py', 'c': 'c', 'cpp': 'cpp', 'java': 'java'}.get(language)
+        if not ext:
+            return {"error": "Unsupported language"}
 
-        # Join input data with newline if it's a list; otherwise, treat it as a single string
-        if isinstance(input_data, list):
-            stdin_data = "\n".join(map(str, input_data))
-        else:
-            stdin_data = str(input_data)
+        # Set up the temporary directory path
+        temp_dir = "temp_dir"
+        os.makedirs(temp_dir, exist_ok=True)
 
-        payload = {
-            "source_code": source_code,
-            "language_id": language_id, 
-            "stdin": stdin_data,
-            "expected_output": str(expected_output)
-        }
+        # Define paths for source code and input file on the local host
+        host_source_file_path = os.path.join(temp_dir, f"code.{ext}")
+        host_input_file_path = os.path.join(temp_dir, "input.txt")
 
-        querystring = {"base64_encoded": "false", "wait": "true", "fields": "*"}
-        response = requests.post(API_URL, json=payload, headers=headers, params=querystring)
-        response.raise_for_status()
+        # Write the source code to a file in temp_dir
+        with open(host_source_file_path, "w") as source_file:
+            source_file.write(source_code)
 
-        response_data = response.json()
+        # Write the input data to a file in temp_dir
+        with open(host_input_file_path, "w") as input_file:
+            input_file.write("\n".join(input_data))
+
+        # Define paths for source code and input file in the Docker container
+        container_source_file_path = f"/code/code.{ext}"
+        container_input_file_path = "/code/input.txt"
+
+        # Copy the source code and input file into the Docker container
+        subprocess.run(["docker", "cp", host_source_file_path, f"test_container:{container_source_file_path}"])
+        subprocess.run(["docker", "cp", host_input_file_path, f"test_container:{container_input_file_path}"])
+
+        # Execute compile.sh inside the container
+        result = subprocess.run(
+            [
+                "docker", "exec", "test_container",
+                "bash", "/code/compile.sh", language, container_source_file_path, container_input_file_path
+            ],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+
+        # Capture and return output
         return {
             "input": input_data,
             "expected_output": expected_output,
-            "stdout": response_data.get("stdout"),
-            "stderr": response_data.get("stderr"),
-            "status": response_data.get("status", {}).get("description"),
-            "time": response_data.get("time"),
-            "memory": response_data.get("memory"),
+            "stdout": result.stdout,
+            "stderr": result.stderr,
+            "status": "Success" if result.returncode == 0 else "Error"
         }
 
-    except requests.RequestException as e:
-        return {"error": str(e)}
-    except Exception as e:
-        return {"error": str(e)}
+    finally:
+        # Clean up the files in temp_dir
+        if os.path.exists(host_source_file_path):
+            os.remove(host_source_file_path)
+        if os.path.exists(host_input_file_path):
+            os.remove(host_input_file_path)
+
+
+
+
+
+
     
 def compilecode(PROBLEMS_FILE_PATH, problem_id, user_code, test_case, language):
-
     try:
+        # Load problem data
         with open(PROBLEMS_FILE_PATH, 'r') as f:
             problems_data = json.load(f)
         problem = get_problem_by_id(problems_data, problem_id)
+        
+        # Check if the problem and test case exist
+        if not problem or test_case not in problem:
+            return JsonResponse({"error": "Problem not found or invalid test case."}, status=404)
+
+        # Retrieve the samples for the specified test case
         samples = problem[test_case]
+
+        # Collect results for each sample only once
+        results = []
+        for sample in samples:
+            input_data = sample["input"]
+            expected_output = sample["output"]
+            result = compilation(user_code, input_data, expected_output, language)
+            results.append(result)
+
+        return JsonResponse({"results": results})
 
     except (IndexError, KeyError, FileNotFoundError):
         return JsonResponse({"error": "Problem not found or invalid index."}, status=404)
 
-    # Collect results for each sample
-    results = []
-    for sample in samples:
-        input_data = sample["input"]
-        expected_output = sample["output"]
-        result = compilation(user_code, input_data, expected_output, language)
-        results.append(result)
-
-    return JsonResponse({"results": results})
 
 def get_languageid(language):
     
