@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "compile",
     "problems",
     "contest_details",
+    "manualProblems",
     "corsheaders",  # Add this line
 ]
 

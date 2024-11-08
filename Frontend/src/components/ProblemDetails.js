@@ -11,8 +11,11 @@ function ProblemDetails({ selectedProblemId }) {
       .then((data) => {
         const selectedProblem = data.problems.find(
           (problem) => problem.id === parseInt(selectedProblemId)
+          
         );
+        console.log("geted")
         setProblem(selectedProblem);
+        console.log(setProblem(selectedProblem))
       })
       .catch((error) => console.error("Error loading JSON:", error));
   }, [selectedProblemId]);

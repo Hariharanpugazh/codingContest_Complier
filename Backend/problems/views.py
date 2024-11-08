@@ -2,6 +2,7 @@ import json
 import os
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from .additional import filter
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -10,6 +11,27 @@ def userRole(request):
     if request.method == "POST":
         data = json.loads(request.body)
         role = data.get('role', '')
+        count = data.get('count', 0)
+
+        # Load the problems from questions.json
+        problems_file_path = os.path.join(BASE_DIR, 'compile', 'jsonfiles', 'questions.json')
+        with open(problems_file_path, 'r') as file:
+            problems_data = json.load(file)
+        
+        # Filter problems based on the role
+        filtered_problems = [problem for problem in problems_data['problems'] if role in problem.get('role')]
+        
+        response = filter.filteration(filtered_problems, role, count, BASE_DIR)
+        return response
+    
+    return JsonResponse({"error": "Invalid request method."}, status=405)
+
+'''
+def userRole(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        role = data.get('role', '')
+        count = data.get('count', '')
 
         print(BASE_DIR)
         # Load the problems from problems.json
@@ -18,7 +40,7 @@ def userRole(request):
             problems_data = json.load(file)
         
         # Filter problems based on the role
-        filtered_problems = [problem for problem in problems_data['problems'] if problem.get('role') == role]
+        filtered_problems = [problem for problem in problems_data['problems'] if role in problem.get('role')]
 
         # Prepare the data to save
         filtered_data = {"problems": filtered_problems}
@@ -36,3 +58,8 @@ def userRole(request):
         return JsonResponse({"message": "Filtered data saved to Frontend/autoSelected.json"})
     
     return JsonResponse({"error": "Invalid request method."}, status=405)
+'''
+
+
+    
+    

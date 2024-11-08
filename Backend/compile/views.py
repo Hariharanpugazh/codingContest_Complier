@@ -5,15 +5,15 @@ import os
 from .additional import compile, csvtojson, filepath
 
 
-# PROBLEMS_FILE_PATH = os.path.join('compile/jsonfiles', 'questions.json')
+PROBLEMS_FILE_PATH = os.path.join('compile/jsonfiles', 'questions.json')
 
 @csrf_exempt
 def compileCode(request):
     if request.method == "POST":
         
-        PROBLEMS_FILE_PATH = filepath.get_filepath()
+        # PROBLEMS_FILE_PATH = filepath.get_filepath()
         
-        print('PROBLEMS_FILE_PATH:',PROBLEMS_FILE_PATH)
+        # print('PROBLEMS_FILE_PATH:',PROBLEMS_FILE_PATH)
 
         data = json.loads(request.body)
         print('\n',data)
@@ -33,15 +33,14 @@ def compileCode(request):
 def compileHidden(request):
     if request.method == "POST":
 
-        PROBLEMS_FILE_PATH = filepath.get_filepath()
+        # PROBLEMS_FILE_PATH = filepath.get_filepath()
 
-        print('PROBLEMS_FILE_PATH:',PROBLEMS_FILE_PATH)
+        # print('PROBLEMS_FILE_PATH:',PROBLEMS_FILE_PATH)
 
         data = json.loads(request.body)
         user_code = data.get('user_code', '')
         language = data.get('language', '')
         problem_id = data.get('problem_id', 0)
-        PROBLEMS_FILE_PATH = filepath.get_filepath()
 
         test_case = 'hidden_samples'
         response = compile.compilecode(PROBLEMS_FILE_PATH, problem_id, user_code, test_case, language)
@@ -102,4 +101,4 @@ def selectedProblems(request):
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
 
-    return JsonResponse({"error": "Invalid request method."}, status=405)
+    return JsonResponse({"error": "Invalid request method."}, status=405)   
