@@ -54,7 +54,7 @@ function ContestPage() {
       });
 
       const results = response.data.results;
-      const passedCount = results.filter((result) => result.status === 'Accepted').length;
+      const passedCount = results.filter((result) => result.status === 'Success').length;
       const failedCount = results.length - passedCount;
 
       setSubmitSummary({
