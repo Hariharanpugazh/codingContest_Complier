@@ -7,11 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import PreviewButton from '../components/previewButton';
 
-const roles = [
-  "Junior Developer",
-  "Senior Developer",
-  "AI Developer"
-];
+const roles = ["Junior Developer", "Senior Developer", "AI Developer"];
 
 const ProblemForm = () => {
   const [testCases, setTestCases] = useState([{ inputs: [''], output: '' }]);
@@ -24,17 +20,33 @@ const ProblemForm = () => {
     level: '',
   });
 
-  // Function to load problem data for modification
   const loadProblemData = (problem) => {
     setProblemData({
-      id: problem.id,
-      title: problem.title,
-      description: problem.problem_statement,
-      level: problem.level.charAt(0).toUpperCase() + problem.level.slice(1),
+      id: problem.id || '',
+      title: problem.title || '',
+      description: problem.problem_statement || '',
+      level: problem.level ? problem.level.charAt(0).toUpperCase() + problem.level.slice(1) : '',
     });
+
     setSelectedRoles(problem.role || []);
-    setTestCases(problem.samples && Array.isArray(problem.samples) ? problem.samples : [{ inputs: [''], output: '' }]);
-    setHiddenTestCases(problem.hidden_samples && Array.isArray(problem.hidden_samples) ? problem.hidden_samples : [{ inputs: [''], output: '' }]);
+
+    setTestCases(
+      problem.samples && Array.isArray(problem.samples) && problem.samples.length > 0
+        ? problem.samples.map(testCase => ({
+            inputs: testCase.input ? [...testCase.input] : [''],
+            output: testCase.output || ''
+          }))
+        : [{ inputs: [''], output: '' }]
+    );
+
+    setHiddenTestCases(
+      problem.hidden_samples && Array.isArray(problem.hidden_samples) && problem.hidden_samples.length > 0
+        ? problem.hidden_samples.map(hiddenTestCase => ({
+            inputs: hiddenTestCase.input ? [...hiddenTestCase.input] : [''],
+            output: hiddenTestCase.output || ''
+          }))
+        : [{ inputs: [''], output: '' }]
+    );
   };
 
   const handleAddTestCase = (isHidden = false) => {
@@ -55,6 +67,12 @@ const ProblemForm = () => {
     const updatedCases = [...cases];
     updatedCases[testCaseIndex].inputs = updatedCases[testCaseIndex].inputs.filter((_, idx) => idx !== inputIndex);
     isHidden ? setHiddenTestCases(updatedCases) : setTestCases(updatedCases);
+  };
+
+  const handleDeleteTestCase = (testCaseIndex, isHidden = false) => {
+    const cases = isHidden ? hiddenTestCases : testCases;
+    const newCases = cases.filter((_, idx) => idx !== testCaseIndex);
+    isHidden ? setHiddenTestCases(newCases) : setTestCases(newCases);
   };
 
   const handleRoleChange = (event) => {
@@ -96,6 +114,13 @@ const ProblemForm = () => {
         pauseOnHover: true,
         draggable: true,
       });
+
+      // Clear all fields after successful save
+      setProblemData({ id: '', title: '', description: '', level: '' });
+      setSelectedRoles([]);
+      setTestCases([{ inputs: [''], output: '' }]);
+      setHiddenTestCases([{ inputs: [''], output: '' }]);
+      
     } catch (error) {
       console.error('Failed to save problem data:', error);
       toast.error('Failed to save problem data.', {
@@ -124,7 +149,11 @@ const ProblemForm = () => {
             margin="normal"
             value={problemData.id}
             onChange={(e) => handleProblemDataChange('id', e.target.value)}
+            onInput={(e) => {
+              e.target.value = e.target.value.replace(/[^0-9]/g, '');
+            }}
           />
+
           <TextField
             fullWidth
             label="Problem"
@@ -145,12 +174,12 @@ const ProblemForm = () => {
           />
           <Box mt={2}>
             <Typography variant="h6">Test Cases</Typography>
-            {testCases.map((testCase, testCaseIndex) => (
+            {testCases && testCases.map((testCase, testCaseIndex) => (
               <Box key={testCaseIndex} mb={2} p={2} border="1px solid #ddd" borderRadius={1}>
                 <Typography variant="subtitle1" gutterBottom>
                   Test Case {testCaseIndex + 1}
                 </Typography>
-                {testCase.inputs.map((input, inputIndex) => (
+                {testCase.inputs && testCase.inputs.map((input, inputIndex) => (
                   <Box display="flex" alignItems="center" key={inputIndex}>
                     <TextField
                       fullWidth
@@ -196,21 +225,37 @@ const ProblemForm = () => {
                     setTestCases(updatedCases);
                   }}
                 />
-                {testCaseIndex === testCases.length - 1 && (
-                  <Button
-                    onClick={() => handleAddTestCase(false)}
-                    variant="contained"
-                    color="success"
-                    sx={{
-                      mt: 1,
-                      px: 2,
-                      ':hover': { backgroundColor: '#66bb6a' },
-                      fontSize: '0.8rem',
-                    }}
-                  >
-                    Add Test Case
-                  </Button>
-                )}
+                <Box display="flex" mt={1}>
+                  {testCaseIndex === testCases.length - 1 && (
+                    <Button
+                      onClick={() => handleAddTestCase(false)}
+                      variant="contained"
+                      color="success"
+                      sx={{
+                        px: 2,
+                        ':hover': { backgroundColor: '#66bb6a' },
+                        fontSize: '0.8rem',
+                      }}
+                    >
+                      Add Test Case
+                    </Button>
+                  )}
+                  {testCaseIndex > 0 && (
+                    <Button
+                      onClick={() => handleDeleteTestCase(testCaseIndex, false)}
+                      variant="contained"
+                      color="error"
+                      sx={{
+                        ml: 1,
+                        px: 2,
+                        ':hover': { backgroundColor: '#f44336' },
+                        fontSize: '0.8rem',
+                      }}
+                    >
+                      Delete Test Case
+                    </Button>
+                  )}
+                </Box>
               </Box>
             ))}
           </Box>
@@ -250,12 +295,12 @@ const ProblemForm = () => {
           </TextField>
           <Box mt={2}>
             <Typography variant="h6">Hidden Test Cases</Typography>
-            {hiddenTestCases.map((hiddenTestCase, hiddenTestCaseIndex) => (
+            {hiddenTestCases && hiddenTestCases.map((hiddenTestCase, hiddenTestCaseIndex) => (
               <Box key={hiddenTestCaseIndex} mb={2} p={2} border="1px solid #ddd" borderRadius={1}>
                 <Typography variant="subtitle1" gutterBottom>
                   Hidden Test Case {hiddenTestCaseIndex + 1}
                 </Typography>
-                {hiddenTestCase.inputs.map((input, inputIndex) => (
+                {hiddenTestCase.inputs && hiddenTestCase.inputs.map((input, inputIndex) => (
                   <Box display="flex" alignItems="center" key={inputIndex}>
                     <TextField
                       fullWidth
@@ -301,21 +346,37 @@ const ProblemForm = () => {
                     setHiddenTestCases(updatedCases);
                   }}
                 />
-                {hiddenTestCaseIndex === hiddenTestCases.length - 1 && (
-                  <Button
-                    onClick={() => handleAddTestCase(true)}
-                    variant="contained"
-                    color="success"
-                    sx={{
-                      mt: 1,
-                      px: 2,
-                      ':hover': { backgroundColor: '#66bb6a' },
-                      fontSize: '0.8rem',
-                    }}
-                  >
-                    Add Hidden Test Case
-                  </Button>
-                )}
+                <Box display="flex" mt={1}>
+                  {hiddenTestCaseIndex === hiddenTestCases.length - 1 && (
+                    <Button
+                      onClick={() => handleAddTestCase(true)}
+                      variant="contained"
+                      color="success"
+                      sx={{
+                        px: 2,
+                        ':hover': { backgroundColor: '#66bb6a' },
+                        fontSize: '0.8rem',
+                      }}
+                    >
+                      Add Hidden Test Case
+                    </Button>
+                  )}
+                  {hiddenTestCaseIndex > 0 && (
+                    <Button
+                      onClick={() => handleDeleteTestCase(hiddenTestCaseIndex, true)}
+                      variant="contained"
+                      color="error"
+                      sx={{
+                        ml: 1,
+                        px: 2,
+                        ':hover': { backgroundColor: '#f44336' },
+                        fontSize: '0.8rem',
+                      }}
+                    >
+                      Delete Hidden Test Case
+                    </Button>
+                  )}
+                </Box>
               </Box>
             ))}
           </Box>

@@ -9,16 +9,14 @@ const PreviewButton = ({ onEditProblem }) => {
 
   const handlePreview = async () => {
     try {
-      // Fetch problems data from the backend API
       const response = await axios.get('http://localhost:8000/manualProblems/');
       const questions = response.data.problems;
 
-      // Group questions by difficulty level
-      const easyQuestions = questions.filter((problem) => problem.level === "easy");
-      const mediumQuestions = questions.filter((problem) => problem.level === "medium");
-      const hardQuestions = questions.filter((problem) => problem.level === "hard");
-
-      setPreviewData({ easy: easyQuestions, medium: mediumQuestions, hard: hardQuestions });
+      setPreviewData({
+        easy: questions.filter((problem) => problem.level === "easy"),
+        medium: questions.filter((problem) => problem.level === "medium"),
+        hard: questions.filter((problem) => problem.level === "hard"),
+      });
       setOpenPreview(true);
     } catch (error) {
       console.error("Failed to fetch preview data:", error);
@@ -29,7 +27,11 @@ const PreviewButton = ({ onEditProblem }) => {
     setOpenPreview(false);
   };
 
-  // Function to handle delete
+  const handleModify = (problem) => {
+    if (onEditProblem) onEditProblem(problem);
+    setOpenPreview(false);
+  };
+
   const handleDelete = async (problemId) => {
     try {
       await axios.delete(`http://localhost:8000/manualProblems/`, { data: { id: problemId } });
@@ -40,19 +42,12 @@ const PreviewButton = ({ onEditProblem }) => {
     }
   };
 
-  // Function to handle modify
-  const handleModify = (problem) => {
-    onEditProblem(problem); // Pass the problem data to the parent (ManualSelectUi.js)
-    setOpenPreview(false);  // Close the preview dialog
-  };
-
   return (
     <div>
       <Button variant="contained" color="secondary" onClick={handlePreview}>
         Preview
       </Button>
 
-      {/* Preview Dialog */}
       <Dialog open={openPreview} onClose={handleClosePreview} fullWidth maxWidth="md">
         <DialogTitle>Preview Problems by Difficulty</DialogTitle>
         <DialogContent>
