@@ -15,7 +15,8 @@ function CreateContest() {
     endTime: '',
     noEndTime: false,
     organizationType: '',
-    organizationName: ''
+    organizationName: '',
+    TestType: '',
   });
 
   const handleChange = (e) => {
@@ -47,13 +48,15 @@ function CreateContest() {
         end_time: endDateTime,
         organization_type: formData.organizationType,
         organization_name: formData.organizationName,
+        ContestType:formData.TestType,
       });
       
-      alert('Details saved successfully!');
+      alert('Test Published successfully!');
       console.log('API response:', response.data);
       
+      
       // Redirect to Contest Challenges page after successful submission
-      navigate('/SelectTestOption');
+      console.log("Details saved successfully!")
     } catch (error) {
       console.error('Error saving contest details:', error);
       alert('There was an error saving the contest details. Please try again.');
@@ -163,6 +166,23 @@ function CreateContest() {
               required
               className="w-full border p-2 rounded"
             />
+          </div>
+
+          <div className="mb-4">
+            <label className="block font-bold mb-2">Select Test Type <span className="text-red-500">*</span></label>
+            <select
+              name="TestType"
+              value={formData.TestType}
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            >
+              <option value="">Select Test type</option>
+              <option value="Manual">Manual</option>
+              <option value="Auto">Auto</option>
+              {/* <option value="University">University</option>
+              <option value="Other">Other</option> */}
+            </select>
           </div>
 
           <button type="submit" className="bg-green-500 text-white w-full p-2 rounded mt-4">

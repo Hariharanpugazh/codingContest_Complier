@@ -83,9 +83,16 @@ CORS_ALLOWED_ORIGINS = [
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'djongo',
+        'NAME': 'Coding_Platform',  # Replace with your MongoDB database name
+        'CLIENT': {
+            'host': 'localhost',         # Replace with your MongoDB host if different
+            'port': 27017,               # Replace with your MongoDB port if different
+            # 'username': 'your_username', # Optional: Add if your MongoDB requires auth
+            # 'password': 'your_password', # Optional: Add if your MongoDB requires auth
+            # 'authSource': 'admin',       # Typically 'admin' or the database name for auth
+        }
     }
 }
 
