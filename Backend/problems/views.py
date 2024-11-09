@@ -11,7 +11,7 @@ def userRole(request):
     if request.method == "POST":
         data = json.loads(request.body)
         role = data.get('role', '')
-        count = data.get(3, 0)
+        count = 3
 
         # Load the problems from questions.json
         problems_file_path = os.path.join(BASE_DIR, 'compile', 'jsonfiles', 'questions.json')
