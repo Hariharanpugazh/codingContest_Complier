@@ -8,7 +8,7 @@ import SelectTestOption from './pages/SelectTestOption';
 import FileUpload from './pages/FileUpload';
 import ManualSelectUI from './pages/ManualSelectUI'
 
-import ContestChallenges from './pages/ContestChallenges';
+
 
 
 
@@ -17,10 +17,13 @@ function App() {
     <Router>
       <Routes>
         {/* <Route path="/" element={<AutoContest></AutoContest>}/> */}
+        {/* hr-page */}
         <Route path="/" element={<CreateContest />} />
         <Route path="/SelectTestOption" element={<SelectTestOption />}/>
         <Route path="/FileUpload" element={<FileUpload />} />
         <Route path="/ManualSelectUI" element={<ManualSelectUI />} />
+
+        {/* user page */}
         <Route path="/AutoContest" element={<AutoContest />} />
         <Route path="/contest" element={<ContestPage />} />
       </Routes>

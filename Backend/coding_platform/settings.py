@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "problems",
     "contest_details",
     "manualProblems",
+    "fetchProblems",
     "corsheaders",  # Add this line
 ]
 

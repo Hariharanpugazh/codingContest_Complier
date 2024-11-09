@@ -3,7 +3,9 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 import os
 from .additional import compile, csvtojson, filepath
-
+from .models import FileUploadProblems
+import csv
+import traceback
 
 PROBLEMS_FILE_PATH = os.path.join('compile/jsonfiles', 'questions.json')
 
@@ -49,17 +51,31 @@ def compileHidden(request):
 @csrf_exempt
 def userInput(request):
     if request.method == 'POST':
-        csv_file = request.FILES.get('file')
-        if not csv_file:
-            return JsonResponse({'error': 'No file provided'}, status=400)
-        
+        try:
+            csv_file = request.FILES.get('file')
+            if not csv_file:
+                return JsonResponse({'error': 'No file provided'}, status=400)
 
-        output_dir = 'compile/jsonfiles'  # Directory to save problems.json
-        os.makedirs(output_dir, exist_ok=True)  # Create directory if it doesn't exist
-        output_json_path = os.path.join(output_dir, 'problems.json')  # Path for problems.json
+            # Convert CSV to JSON format
+            data = []
+            reader = csv.DictReader(csv_file.read().decode('utf-8').splitlines())
+            for row in reader:
+                data.append(row)
 
-        response = csvtojson.csv_to_json(csv_file, output_json_path)
-        return response
+            # Insert data into MongoDB
+            try:
+                FileUploadProblems.objects.bulk_create([FileUploadProblems(**row) for row in data])
+                return JsonResponse({'message': 'File uploaded and saved to MongoDB successfully'}, status=201)
+            except Exception as e:
+                print("Database insertion error:", str(e))
+                traceback.print_exc()
+                return JsonResponse({'error': str(e)}, status=500)
+        except Exception as e:
+            print("An error occurred while processing the file:", str(e))
+            traceback.print_exc()
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
 @csrf_exempt
@@ -97,4 +113,4 @@ def selectedProblems(request):
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
 
-    return JsonResponse({"error": "Invalid request method."}, status=405)   
+    return JsonResponse({"error": "Invalid request method."}, status=405)
