@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Typography, Box, Grid, IconButton, Select, MenuItem, InputLabel, FormControl, ListItemText, Checkbox } from '@mui/material';
+import { TextField, Button, Typography, Box, Grid, IconButton, Select, MenuItem, InputLabel, FormControl, ListItemText, Checkbox, Card, CardContent } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import axios from 'axios';
@@ -78,60 +78,71 @@ const ManualSelectUI = () => {
   };
 
   return (
-    <Box p={3}>
-      <Typography variant="h4" align="center" gutterBottom>
+    <Box p={4} sx={{ backgroundColor: '#f5f5f5', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' }}>
+      <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: 'bold', color: '#1976d2' }}>
         Edit Question
       </Typography>
       <Grid container spacing={4}>
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label="Title"
-            variant="outlined"
-            margin="normal"
-            value={questionData.title}
-            onChange={(e) => setQuestionData({ ...questionData, title: e.target.value })}
-          />
-          <TextField
-            fullWidth
-            label="Description"
-            variant="outlined"
-            margin="normal"
-            multiline
-            rows={3}
-            value={questionData.problem_statement}
-            onChange={(e) => setQuestionData({ ...questionData, problem_statement: e.target.value })}
-          />
+        <Grid item xs={12} md={6}>
+          <Card sx={{ borderRadius: 2, padding: 3, boxShadow: 3 }}>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
+              Question Details
+            </Typography>
+            <TextField
+              fullWidth
+              label="Title"
+              variant="outlined"
+              margin="normal"
+              value={questionData.title}
+              onChange={(e) => setQuestionData({ ...questionData, title: e.target.value })}
+              sx={{ marginBottom: '16px' }}
+            />
+            <TextField
+              fullWidth
+              label="Description"
+              variant="outlined"
+              margin="normal"
+              multiline
+              rows={3}
+              value={questionData.problem_statement}
+              onChange={(e) => setQuestionData({ ...questionData, problem_statement: e.target.value })}
+              sx={{ marginBottom: '16px' }}
+            />
+          </Card>
         </Grid>
 
-        {/* Role Selection */}
-        <Grid item xs={12}>
-          <FormControl fullWidth variant="outlined" margin="normal">
-            <InputLabel>Roles</InputLabel>
-            <Select
-              multiple
-              value={questionData.role}
-              onChange={handleRoleChange}
-              renderValue={(selected) => selected.join(', ')}
-              label="Roles"
-            >
-              {availableRoles.map((role) => (
-                <MenuItem key={role} value={role}>
-                  <Checkbox checked={questionData.role.includes(role)} />
-                  <ListItemText primary={role} />
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+        <Grid item xs={12} md={6}>
+          <Card sx={{ borderRadius: 2, padding: 3, boxShadow: 3 }}>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
+              Roles
+            </Typography>
+            <FormControl fullWidth variant="outlined" margin="normal" sx={{ marginBottom: '16px' }}>
+              <InputLabel>Roles</InputLabel>
+              <Select
+                multiple
+                value={questionData.role}
+                onChange={handleRoleChange}
+                renderValue={(selected) => selected.join(', ')}
+                label="Roles"
+              >
+                {availableRoles.map((role) => (
+                  <MenuItem key={role} value={role}>
+                    <Checkbox checked={questionData.role.includes(role)} />
+                    <ListItemText primary={role} />
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Card>
         </Grid>
       </Grid>
 
       {/* Test Cases Section */}
-      <Box mt={2}>
-        <Typography variant="h6">Test Cases</Typography>
+      <Box mt={4}>
+        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>Test Cases</Typography>
         {testCases.map((testCase, index) => (
-          <Box key={index} mb={2}>
-            <Typography variant="subtitle1">Test Case {index + 1}</Typography>
+          <Card key={index} sx={{ marginBottom: '16px', padding: 2, borderRadius: 2, boxShadow: 2 }}>
+            <Typography variant="subtitle1" gutterBottom>Test Case {index + 1}</Typography>
             {testCase.input.map((input, inputIndex) => (
               <TextField
                 key={inputIndex}
@@ -145,6 +156,7 @@ const ManualSelectUI = () => {
                   updatedTestCases[index].input[inputIndex] = e.target.value;
                   setTestCases(updatedTestCases);
                 }}
+                sx={{ marginBottom: '16px' }}
               />
             ))}
             <TextField
@@ -158,23 +170,24 @@ const ManualSelectUI = () => {
                 updatedTestCases[index].output = e.target.value;
                 setTestCases(updatedTestCases);
               }}
+              sx={{ marginBottom: '16px' }}
             />
             <IconButton onClick={() => handleRemoveTestCase(index)} color="error">
               <RemoveIcon />
             </IconButton>
-          </Box>
+          </Card>
         ))}
-        <Button onClick={() => handleAddTestCase(false)} variant="contained" color="success">
+        <Button onClick={() => handleAddTestCase(false)} variant="contained" color="success" sx={{ marginBottom: '32px' }}>
           Add Test Case
         </Button>
       </Box>
 
       {/* Hidden Test Cases Section */}
-      <Box mt={2}>
-        <Typography variant="h6">Hidden Test Cases</Typography>
+      <Box mt={4}>
+        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>Hidden Test Cases</Typography>
         {hiddenTestCases.map((hiddenTestCase, index) => (
-          <Box key={index} mb={2}>
-            <Typography variant="subtitle1">Hidden Test Case {index + 1}</Typography>
+          <Card key={index} sx={{ marginBottom: '16px', padding: 2, borderRadius: 2, boxShadow: 2 }}>
+            <Typography variant="subtitle1" gutterBottom>Hidden Test Case {index + 1}</Typography>
             {hiddenTestCase.input.map((input, inputIndex) => (
               <TextField
                 key={inputIndex}
@@ -188,6 +201,7 @@ const ManualSelectUI = () => {
                   updatedHiddenTestCases[index].input[inputIndex] = e.target.value;
                   setHiddenTestCases(updatedHiddenTestCases);
                 }}
+                sx={{ marginBottom: '16px' }}
               />
             ))}
             <TextField
@@ -201,19 +215,20 @@ const ManualSelectUI = () => {
                 updatedHiddenTestCases[index].output = e.target.value;
                 setHiddenTestCases(updatedHiddenTestCases);
               }}
+              sx={{ marginBottom: '16px' }}
             />
             <IconButton onClick={() => handleRemoveTestCase(index, true)} color="error">
               <RemoveIcon />
             </IconButton>
-          </Box>
+          </Card>
         ))}
-        <Button onClick={() => handleAddTestCase(true)} variant="contained" color="success">
+        <Button onClick={() => handleAddTestCase(true)} variant="contained" color="success" sx={{ marginBottom: '32px' }}>
           Add Hidden Test Case
         </Button>
       </Box>
-      
+
       <Box mt={4}>
-        <Button variant="contained" color="primary" onClick={handleSave}>
+        <Button variant="contained" color="primary" onClick={handleSave} sx={{ padding: '10px 20px', fontSize: '16px' }}>
           Save
         </Button>
       </Box>
