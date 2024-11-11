@@ -6,6 +6,12 @@ from .additional import compile, csvtojson, filepath
 from .models import FileUploadProblems
 import csv
 import traceback
+from pymongo import MongoClient
+
+client = MongoClient('mongodb://localhost:27017/')
+db = client['Coding_Platform']
+temp_questions_collection = db['tempQuestions']
+
 
 PROBLEMS_FILE_PATH = os.path.join('compile/jsonfiles', 'questions.json')
 
@@ -47,7 +53,6 @@ def compileHidden(request):
 
     return JsonResponse({"error": "Invalid request method."}, status=405)
     
-
 @csrf_exempt
 def userInput(request):
     if request.method == 'POST':
@@ -60,12 +65,27 @@ def userInput(request):
             data = []
             reader = csv.DictReader(csv_file.read().decode('utf-8').splitlines())
             for row in reader:
-                data.append(row)
+                # Ensure each row is structured correctly for MongoDB, matching your current structure
+                formatted_row = {
+                    "id": int(row.get("id", 0)),  # Assuming 'id' field exists in CSV
+                    "title": row.get("title", ""),
+                    "role": row.get("role", "").split(','),  # Assuming 'role' is a comma-separated list in CSV
+                    "level": row.get("level", ""),
+                    "problem_statement": row.get("problem_statement", ""),
+                    "samples": eval(row.get("samples", "[]")),  # Assuming samples are stored as a JSON array string
+                    "hidden_samples": eval(row.get("hidden_samples", "[]"))  # Assuming hidden_samples are stored as a JSON array string
+                }
+                data.append(formatted_row)
 
-            # Insert data into MongoDB
+            # Append the new data to the existing problems array within the single document
             try:
-                FileUploadProblems.objects.bulk_create([FileUploadProblems(**row) for row in data])
-                return JsonResponse({'message': 'File uploaded and saved to MongoDB successfully'}, status=201)
+                # This will push new problems into the existing `problems` array
+                temp_questions_collection.update_one(
+                    {},  # Assuming there's only one document, otherwise specify a filter if needed
+                    {'$push': {'problems': {'$each': data}}},
+                    upsert=True  # If the document doesn't exist, create it
+                )
+                return JsonResponse({'message': 'File uploaded and appended to MongoDB successfully'}, status=201)
             except Exception as e:
                 print("Database insertion error:", str(e))
                 traceback.print_exc()

@@ -1,114 +1,208 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import AddProblemSlide from "../components/AddProblemSlide";
+import React, { useState, useEffect } from 'react';
+import { Button, Typography, Box, Dialog, DialogActions, DialogContent, DialogTitle, Card, CardContent, CardActions, Grid, Menu, MenuItem } from '@mui/material';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import CreateIcon from '@mui/icons-material/Create';
 
-function HrUpload() {
+const HrUpload = () => {
   const [questions, setQuestions] = useState([]);
-  const [difficultyFilter, setDifficultyFilter] = useState("");
-  const [isSlideOpen, setIsSlideOpen] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
+  const [selectedQuestionId, setSelectedQuestionId] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const navigate = useNavigate();
 
+  // Fetch questions from tempQuestions
   useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/manualProblems/');
+        setQuestions(response.data.problems);
+      } catch (error) {
+        console.error('Failed to fetch questions:', error);
+      }
+    };
     fetchQuestions();
   }, []);
 
-  const fetchQuestions = async () => {
-    const response = await axios.get("http://127.0.0.1:8000/questions/");
-    setQuestions(response.data.problems);
+  const handleModify = (question) => {
+    navigate('/manualSelectUI', { state: { question } });
   };
 
-  const handleModifyQuestion = (question) => {
-    // This function will open a modification form in the future
-    alert(`Modify question: ${question.title}`);
-  };
-
-  const handleDeleteQuestion = async (questionId) => {
+  const handleDelete = async (questionId) => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/questions/${questionId}/`);
-      fetchQuestions();
+      await axios.delete('http://localhost:8000/manualProblems/', { data: { id: questionId } });
+      setQuestions(questions.filter(q => q.id !== questionId));
+      setDeleteConfirm(false);
     } catch (error) {
-      console.error("Error deleting question:", error);
+      console.error("Failed to delete question:", error);
     }
   };
 
-  const filteredQuestions = questions.filter((q) =>
-    difficultyFilter ? q.level === difficultyFilter : true
-  );
+  const handleUploadClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleBulkUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append("file", file);
+      
+      // Get CSRF token from the cookie
+      const csrfToken = Cookies.get('csrftoken');
+      
+      axios.post('http://localhost:8000/userinput/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'X-CSRFToken': csrfToken  // Add CSRF token to headers
+        },
+        withCredentials: true,  // Include credentials to ensure cookies are sent
+      })
+      .then(response => {
+        console.log("Bulk upload successful:", response.data);
+        setQuestions(prevQuestions => [...prevQuestions, ...response.data.problems]);
+      })
+      .catch(error => console.error("Bulk upload failed:", error));
+    }
+  };
+  const handleManualUpload = () => {
+    navigate('/manualSelectUI');
+    handleMenuClose();
+  };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "800px", margin: "auto" }}>
-      <h1>Questions</h1>
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px" }}>
-        <span>Count: {filteredQuestions.length}</span>
-        <button
-          onClick={() => setIsSlideOpen(true)}
+    <Box p={4}>
+      <Typography variant="h4" align="center" gutterBottom style={{ fontWeight: 'bold', marginBottom: '20px' }}>
+        HR Upload
+      </Typography>
+
+      <Box display="flex" justifyContent="center" mb={4}>
+        <Button 
+          variant="contained" 
+          color="primary" 
+          onClick={handleUploadClick}
           style={{
-            background: "blue",
-            color: "white",
-            borderRadius: "5px",
-            padding: "5px 10px",
+            backgroundColor: '#1976d2',
+            color: '#fff',
+            padding: '10px 20px',
+            fontWeight: 'bold',
+            fontSize: '1rem',
+            borderRadius: '25px',
+            transition: 'background-color 0.3s, transform 0.2s',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
           }}
+          onMouseEnter={(e) => e.target.style.backgroundColor = '#1565c0'}
+          onMouseLeave={(e) => e.target.style.backgroundColor = '#1976d2'}
         >
-          + Add Question
-        </button>
-      </div>
-      <select
-        onChange={(e) => setDifficultyFilter(e.target.value)}
-        value={difficultyFilter}
-        style={{ marginBottom: "20px", padding: "5px" }}
-      >
-        <option value="">Filter by difficulty</option>
-        <option value="easy">Easy</option>
-        <option value="medium">Medium</option>
-        <option value="hard">Hard</option>
-      </select>
-      <table style={{ width: "100%", borderCollapse: "collapse" }}>
-        <thead>
-          <tr style={{ backgroundColor: "#f2f2f2" }}>
-            <th style={{ border: "1px solid #ddd", padding: "8px" }}>S.No</th>
-            <th style={{ border: "1px solid #ddd", padding: "8px" }}>Title</th>
-            <th style={{ border: "1px solid #ddd", padding: "8px" }}>Difficulty</th>
-            <th style={{ border: "1px solid #ddd", padding: "8px" }}>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredQuestions.map((question, index) => (
-            <tr key={question.id}>
-              <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "center" }}>{index + 1}</td>
-              <td style={{ border: "1px solid #ddd", padding: "8px" }}>{question.title}</td>
-              <td style={{ border: "1px solid #ddd", padding: "8px" }}>{question.level}</td>
-              <td style={{ border: "1px solid #ddd", padding: "8px", textAlign: "center" }}>
-                <button
-                  onClick={() => handleModifyQuestion(question)}
-                  style={{
-                    background: "Green",
-                    color: "white",
-                    borderRadius: "5px",
-                    padding: "5px 10px",
-                    marginRight: "5px",
-                  }}
+          Upload
+        </Button>
+        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+          <MenuItem 
+            onClick={() => document.getElementById('bulk-upload-input').click()}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              fontSize: '1rem',
+              padding: '10px 20px',
+              fontWeight: 'bold',
+              color: '#1976d2',
+              transition: 'color 0.3s',
+            }}
+          >
+            <UploadFileIcon /> Bulk Upload
+          </MenuItem>
+          <MenuItem 
+            onClick={handleManualUpload} 
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              fontSize: '1rem',
+              padding: '10px 20px',
+              fontWeight: 'bold',
+              color: '#1976d2',
+              transition: 'color 0.3s',
+            }}
+          >
+            <CreateIcon /> Manual Upload
+          </MenuItem>
+        </Menu>
+        <input
+          type="file"
+          id="bulk-upload-input"
+          accept=".csv"
+          style={{ display: 'none' }}
+          onChange={handleBulkUpload}
+        />
+      </Box>
+
+      <Grid container spacing={3}>
+        {questions.map((question) => (
+          <Grid item xs={12} sm={6} md={4} key={question.id}>
+            <Card
+              variant="outlined"
+              style={{
+                borderRadius: '10px',
+                transition: 'transform 0.2s',
+                boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+              onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+            >
+              <CardContent>
+                <Typography variant="h6" style={{ fontWeight: 'bold' }}>
+                  {question.title}
+                </Typography>
+                <Typography variant="body2" color="textSecondary" style={{ marginTop: '10px' }}>
+                  {question.problem_statement}
+                </Typography>
+              </CardContent>
+              <CardActions style={{ justifyContent: 'space-between', padding: '16px' }}>
+                <Button 
+                  variant="contained" 
+                  color="primary" 
+                  onClick={() => handleModify(question)}
+                  style={{ fontSize: '0.875rem', fontWeight: 'bold' }}
                 >
                   Modify
-                </button>
-                <button
-                  onClick={() => handleDeleteQuestion(question.id)}
-                  style={{
-                    background: "red",
-                    color: "white",
-                    borderRadius: "5px",
-                    padding: "5px 10px",
-                  }}
+                </Button>
+                <Button 
+                  variant="contained" 
+                  color="error" 
+                  onClick={() => { setSelectedQuestionId(question.id); setDeleteConfirm(true); }}
+                  style={{ fontSize: '0.875rem', fontWeight: 'bold' }}
                 >
                   Delete
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                </Button>
+              </CardActions>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
       
-      <AddProblemSlide isOpen={isSlideOpen} onClose={() => setIsSlideOpen(false)} />
-    </div>
+      <Dialog open={deleteConfirm} onClose={() => setDeleteConfirm(false)}>
+        <DialogTitle style={{ fontWeight: 'bold' }}>Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to delete this question?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteConfirm(false)} color="primary" variant="outlined">
+            Cancel
+          </Button>
+          <Button onClick={() => handleDelete(selectedQuestionId)} color="error" variant="contained">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
   );
-}
+};
 
 export default HrUpload;
