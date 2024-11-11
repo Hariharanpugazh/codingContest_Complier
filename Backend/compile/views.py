@@ -57,15 +57,19 @@ def compileHidden(request):
 def userInput(request):
     if request.method == 'POST':
         try:
+            print("Received POST request")  # Debugging log to check if this line executes
+
             csv_file = request.FILES.get('file')
             if not csv_file:
+                print("No file provided")  # Debugging log for file presence
                 return JsonResponse({'error': 'No file provided'}, status=400)
 
             # Convert CSV to JSON format
             data = []
             reader = csv.DictReader(csv_file.read().decode('utf-8').splitlines())
+            print("CSV read successfully")  # Debugging log to check CSV reading
+
             for row in reader:
-                # Ensure each row is structured correctly for MongoDB, matching your current structure
                 formatted_row = {
                     "id": int(row.get("id", 0)),  # Assuming 'id' field exists in CSV
                     "title": row.get("title", ""),
@@ -76,26 +80,26 @@ def userInput(request):
                     "hidden_samples": eval(row.get("hidden_samples", "[]"))  # Assuming hidden_samples are stored as a JSON array string
                 }
                 data.append(formatted_row)
+            
+            print("Data formatted:", data)  # Log the data to check if it's formatted correctly
 
-            # Append the new data to the existing problems array within the single document
-            try:
-                # This will push new problems into the existing `problems` array
-                temp_questions_collection.update_one(
-                    {},  # Assuming there's only one document, otherwise specify a filter if needed
-                    {'$push': {'problems': {'$each': data}}},
-                    upsert=True  # If the document doesn't exist, create it
-                )
-                return JsonResponse({'message': 'File uploaded and appended to MongoDB successfully'}, status=201)
-            except Exception as e:
-                print("Database insertion error:", str(e))
-                traceback.print_exc()
-                return JsonResponse({'error': str(e)}, status=500)
+            # Append to MongoDB
+            temp_questions_collection.update_one(
+                {},
+                {'$push': {'problems': {'$each': data}}},
+                upsert=True
+            )
+            print("Data inserted into MongoDB successfully")  # Debug log for database update
+            return JsonResponse({'message': 'File uploaded and appended to MongoDB successfully'}, status=201)
+
         except Exception as e:
             print("An error occurred while processing the file:", str(e))
             traceback.print_exc()
             return JsonResponse({'error': str(e)}, status=500)
 
+    print("Invalid request method")  # Debugging log if method is not POST
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+
 
 
 @csrf_exempt

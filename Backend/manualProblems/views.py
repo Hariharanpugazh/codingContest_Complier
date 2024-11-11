@@ -37,10 +37,12 @@ def fetch_Questions(request):
 
 def save_problem_data(new_problem):
     """
-    Saves a new problem to `tempQuestions`. If a problem with the same ID exists, it updates it.
+    Adds a new problem to the problems array in tempQuestions. If a document with ObjectId already exists,
+    it appends the new problem to problems; otherwise, it creates a new document.
     """
     try:
-        problem_document = {
+        # Structure the problem data
+        problem_data = {
             "id": new_problem.get('id'),
             "title": new_problem.get('title', ''),
             "role": new_problem.get('role', []),
@@ -50,25 +52,30 @@ def save_problem_data(new_problem):
             "hidden_samples": new_problem.get('hidden_samples', [])
         }
         
-        # Check if a problem with the same ID already exists in `tempQuestions`
-        existing_problem = temp_questions_collection.find_one({'id': problem_document['id']})
-        
-        if existing_problem:
-            # Update existing problem
+        # Specify the main document ID for tempQuestions
+        main_document_id = '6731ed9e1005131d602865de'  # Replace with actual ObjectId if needed
+        existing_document = temp_questions_collection.find_one({'_id': main_document_id})
+
+        if existing_document:
+            # Append new problem to the problems array
             result = temp_questions_collection.update_one(
-                {'id': problem_document['id']},
-                {'$set': problem_document}
+                {'_id': main_document_id},
+                {'$push': {'problems': problem_data}}
             )
-            message = 'Problem updated successfully!'
+            message = 'Problem added to existing document!'
         else:
-            # Insert new problem
-            result = temp_questions_collection.insert_one(problem_document)
-            message = 'Problem created successfully!'
+            # Create a new document if it doesn’t exist, with the problems array initialized
+            new_document = {
+                "_id": main_document_id,
+                "problems": [problem_data]
+            }
+            result = temp_questions_collection.insert_one(new_document)
+            message = 'New document created and problem added!'
 
         if result:
             return JsonResponse({
                 'message': message,
-                'problem_id': problem_document['id']
+                'problem_id': problem_data['id']
             }, status=201)
         else:
             raise Exception("Failed to save the document")
@@ -78,6 +85,33 @@ def save_problem_data(new_problem):
             'error': f'Error saving problem data: {str(e)}'
         }, status=400)
 
+
+@csrf_exempt 
+def publish_questions(request):
+    """
+    Clears FinalQuestions, then copies questions from tempQuestions to FinalQuestions.
+    """
+    if request.method == 'POST':
+        try:
+            # Connect to the MongoDB collections
+            final_questions_collection = db['FinalQuestions']
+            temp_questions = temp_questions_collection.find({}, {'problems': 1, '_id': 0})
+            
+            # Clear FinalQuestions collection before copying
+            final_questions_collection.delete_many({})
+            
+            # Copy each problem from tempQuestions to FinalQuestions
+            for document in temp_questions:
+                final_questions_collection.insert_one(document)
+
+            return JsonResponse({'message': 'Questions published successfully! FinalQuestions collection has been updated.'}, status=200)
+
+        except Exception as e:
+            print("Error publishing questions:", str(e))
+            traceback.print_exc()
+            return JsonResponse({'error': 'Failed to publish questions'}, status=500)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 @csrf_exempt
 def modify_problem_data(new_problem):

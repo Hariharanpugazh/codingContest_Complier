@@ -11,9 +11,10 @@ const HrUpload = () => {
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [selectedQuestionId, setSelectedQuestionId] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null); // New state for file selection
+  const [submitDialogOpen, setSubmitDialogOpen] = useState(false); // New state for submit dialog
   const navigate = useNavigate();
 
-  // Fetch questions from tempQuestions
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
@@ -48,32 +49,60 @@ const HrUpload = () => {
     setAnchorEl(null);
   };
 
-  const handleBulkUpload = (event) => {
+  const handleFileSelect = (event) => {
     const file = event.target.files[0];
+    setSelectedFile(file);
     if (file) {
-      const formData = new FormData();
-      formData.append("file", file);
-      
-      // Get CSRF token from the cookie
-      const csrfToken = Cookies.get('csrftoken');
-      
-      axios.post('http://localhost:8000/userinput/', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'X-CSRFToken': csrfToken  // Add CSRF token to headers
-        },
-        withCredentials: true,  // Include credentials to ensure cookies are sent
-      })
-      .then(response => {
-        console.log("Bulk upload successful:", response.data);
-        setQuestions(prevQuestions => [...prevQuestions, ...response.data.problems]);
-      })
-      .catch(error => console.error("Bulk upload failed:", error));
+      setSubmitDialogOpen(true); // Open submit dialog after file selection
     }
   };
+
+  const handleBulkUpload = () => {
+    if (selectedFile) {
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+
+      const csrfToken = Cookies.get('csrftoken');
+
+      axios.post('http://localhost:8000/userinput/', formData, {
+          headers: {
+              'Content-Type': 'multipart/form-data',
+              'X-CSRFToken': csrfToken
+          },
+          withCredentials: true,
+      })
+      .then(response => {
+          console.log("Bulk upload successful:", response.data);
+          setQuestions(prevQuestions => [...prevQuestions, ...response.data.problems]);
+          setSelectedFile(null); // Reset file after upload
+          setSubmitDialogOpen(false); // Close dialog after successful upload
+      })
+      .catch(error => {
+        console.error("Bulk upload failed:", error);
+        setSubmitDialogOpen(false); // Close dialog on error
+      });
+    } else {
+      console.log("No file selected.");
+    }
+  };
+
   const handleManualUpload = () => {
-    navigate('/manualSelectUI');
+    navigate('/OnebyOne');
     handleMenuClose();
+  };
+
+  const handlePublish = async () => {
+    try {
+      const response = await axios.post('http://localhost:8000/publish/');
+      if (response.status === 200) {
+        alert('Questions published successfully!');
+      } else {
+        alert('Failed to publish questions.');
+      }
+    } catch (error) {
+      console.error("Error publishing questions:", error);
+      alert('An error occurred while publishing questions.');
+    }
   };
 
   return (
@@ -102,6 +131,24 @@ const HrUpload = () => {
         >
           Upload
         </Button>
+        <Button 
+  variant="contained" 
+  color="secondary" 
+  onClick={handlePublish} 
+  style={{
+    marginLeft: '10px',
+    fontWeight: 'bold',
+    padding: '10px 20px',
+    fontSize: '1rem',
+    borderRadius: '25px', // Same rounded shape as the Upload button
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+    backgroundColor: '#9c27b0', // Purple color (if different from "secondary" default)
+  }}
+  onMouseEnter={(e) => e.target.style.backgroundColor = '#8e24aa'}
+  onMouseLeave={(e) => e.target.style.backgroundColor = '#9c27b0'}
+>
+  Publish
+</Button>
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
           <MenuItem 
             onClick={() => document.getElementById('bulk-upload-input').click()}
@@ -139,9 +186,24 @@ const HrUpload = () => {
           id="bulk-upload-input"
           accept=".csv"
           style={{ display: 'none' }}
-          onChange={handleBulkUpload}
+          onChange={handleFileSelect}
         />
       </Box>
+
+      <Dialog open={submitDialogOpen} onClose={() => setSubmitDialogOpen(false)}>
+        <DialogTitle style={{ fontWeight: 'bold' }}>Confirm Upload</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to upload this file?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setSubmitDialogOpen(false)} color="primary" variant="outlined">
+            Cancel
+          </Button>
+          <Button onClick={handleBulkUpload} color="primary" variant="contained" style={{ backgroundColor: '#0000FF', color: '#fff' }}>
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Grid container spacing={3}>
         {questions.map((question) => (
