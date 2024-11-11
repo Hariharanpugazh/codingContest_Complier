@@ -7,6 +7,7 @@ import AutoContest from './pages/AutoContest';
 import SelectTestOption from './pages/SelectTestOption';
 import FileUpload from './pages/FileUpload';
 import ManualSelectUI from './pages/ManualSelectUI'
+import HrUpload from './pages/HrUploadPage';
 
 
 
@@ -22,7 +23,7 @@ function App() {
         <Route path="/SelectTestOption" element={<SelectTestOption />}/>
         <Route path="/FileUpload" element={<FileUpload />} />
         <Route path="/ManualSelectUI" element={<ManualSelectUI />} />
-
+        <Route path="/HrUpload" element={<HrUpload />}/>
         {/* user page */}
         <Route path="/AutoContest" element={<AutoContest />} />
         <Route path="/contest" element={<ContestPage />} />

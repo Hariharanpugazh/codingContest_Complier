@@ -87,3 +87,52 @@ def fetch_ManualUpload_problems(request):
         problems.append(document)
 
     return JsonResponse({'problems': problems}, safe=False)
+
+def update_question_by_id(request):
+    """
+    Updates a specific problem in the questions array based on the question ID.
+    """
+    try:
+        # Parse JSON data from the PUT request
+        data = json.loads(request.body)
+        question_id = data.get("id")  # Assume the PUT request contains {"id": <question_id>, ...other fields...}
+        
+        # Find and update the problem with the specified ID in the `problems` array
+        result = questions_collection.update_one(
+            {"problems.id": question_id},
+            {"$set": {"problems.$": data}}  # Replace the specific problem document in the array
+        )
+
+        if result.matched_count > 0:
+            return JsonResponse({"status": "success", "message": "Problem updated successfully."}, status=200)
+        else:
+            return JsonResponse({"status": "error", "message": "Problem not found."}, status=404)
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)}, status=500)
+
+
+@csrf_exempt
+@require_http_methods(["DELETE"])
+def delete_question_by_id(request):
+    """
+    Deletes a specific problem from the questions array based on the question ID.
+    """
+    try:
+        # Parse JSON data from the DELETE request
+        data = json.loads(request.body)
+        question_id = data.get("id")  # Assume the DELETE request contains {"id": <question_id>}
+
+        # Remove the specific problem with the given `id` from the `problems` array
+        result = questions_collection.update_one(
+            {"problems.id": question_id},
+            {"$pull": {"problems": {"id": question_id}}}
+        )
+
+        if result.modified_count > 0:
+            return JsonResponse({"status": "success", "message": "Problem deleted successfully."}, status=200)
+        else:
+            return JsonResponse({"status": "error", "message": "Problem not found."}, status=404)
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)}, status=500)
+
+
