@@ -2,7 +2,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import SelectTestOption from './SelectTestOption'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function CreateContest() {
   const navigate = useNavigate();
@@ -27,17 +28,9 @@ function CreateContest() {
     });
   };
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   // Perform any necessary form validation or data submission logic here
-
-  //   // Redirect to Contest Challenges page after form submission
-  //   navigate('/contest-challenges');
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     try {
       const startDateTime = `${formData.startDate}T${formData.startTime}`;
       const endDateTime = formData.noEndTime ? null : `${formData.endDate}T${formData.endTime}`;
@@ -48,21 +41,49 @@ function CreateContest() {
         end_time: endDateTime,
         organization_type: formData.organizationType,
         organization_name: formData.organizationName,
-        ContestType:formData.TestType,
+        ContestType: formData.TestType,
       });
-      
-      alert('Test Published successfully!');
+
+      // Display success toast message
+      toast.success('Test Published successfully!', {
+        position: "top-right",
+        autoClose: 1000, // 2 seconds
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+
+      // Delay navigation to allow toast to display
+      setTimeout(() => {
+        // Navigate based on TestType selection after successful form submission
+        if (formData.TestType === "Auto") {
+          navigate("/HrUpload");
+        } else if (formData.TestType === "Manual") {
+          navigate("/ManualPage");
+        }
+      }, 2000); // 2-second delay to match autoClose duration
+
       console.log('API response:', response.data);
-      
-      
-      // Redirect to Contest Challenges page after successful submission
-      console.log("Details saved successfully!")
+      console.log("Details saved successfully!");
+
     } catch (error) {
       console.error('Error saving contest details:', error);
-      alert('There was an error saving the contest details. Please try again.');
+
+      // Display error toast message
+      toast.error('There was an error saving the contest details. Please try again.', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     }
   };
-  
+
   return (
     <div className="container mx-auto p-4 max-w-lg">
       <div className="bg-white shadow p-6 rounded-lg">
@@ -180,8 +201,6 @@ function CreateContest() {
               <option value="">Select Test type</option>
               <option value="Manual">Manual</option>
               <option value="Auto">Auto</option>
-              {/* <option value="University">University</option>
-              <option value="Other">Other</option> */}
             </select>
           </div>
 
@@ -190,6 +209,9 @@ function CreateContest() {
           </button>
         </form>
       </div>
+
+      {/* ToastContainer for displaying toast notifications */}
+      <ToastContainer />
     </div>
   );
 }
