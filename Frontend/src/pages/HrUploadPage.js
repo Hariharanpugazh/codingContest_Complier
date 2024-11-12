@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Button, Typography, Box, Dialog, DialogActions, DialogContent, DialogTitle, Card, CardContent, CardActions, Grid, Menu, MenuItem } from '@mui/material';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import CreateIcon from '@mui/icons-material/Create';
 
 const HrUpload = () => {
+  const { contestId } = useParams(); // Get contestId from URL
   const [questions, setQuestions] = useState([]);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [selectedQuestionId, setSelectedQuestionId] = useState(null);
@@ -107,10 +108,17 @@ const HrUpload = () => {
 
   return (
     <Box p={4}>
+      {/* Display contestId in the top left corner */}
+      <Box p={4} position="relative">
+        <Typography variant="body1" style={{ position: 'absolute', top: 16, left: 16, fontWeight: 'bold' }}>
+          Contest ID: {contestId}
+        </Typography>
+      </Box>
+  
       <Typography variant="h4" align="center" gutterBottom style={{ fontWeight: 'bold', marginBottom: '20px' }}>
         HR Upload
       </Typography>
-
+  
       <Box display="flex" justifyContent="center" mb={4}>
         <Button 
           variant="contained" 
@@ -132,23 +140,23 @@ const HrUpload = () => {
           Upload
         </Button>
         <Button 
-  variant="contained" 
-  color="secondary" 
-  onClick={handlePublish} 
-  style={{
-    marginLeft: '10px',
-    fontWeight: 'bold',
-    padding: '10px 20px',
-    fontSize: '1rem',
-    borderRadius: '25px', // Same rounded shape as the Upload button
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
-    backgroundColor: '#9c27b0', // Purple color (if different from "secondary" default)
-  }}
-  onMouseEnter={(e) => e.target.style.backgroundColor = '#8e24aa'}
-  onMouseLeave={(e) => e.target.style.backgroundColor = '#9c27b0'}
->
-  Publish
-</Button>
+          variant="contained" 
+          color="secondary" 
+          onClick={handlePublish} 
+          style={{
+            marginLeft: '10px',
+            fontWeight: 'bold',
+            padding: '10px 20px',
+            fontSize: '1rem',
+            borderRadius: '25px', // Same rounded shape as the Upload button
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+            backgroundColor: '#9c27b0', // Purple color (if different from "secondary" default)
+          }}
+          onMouseEnter={(e) => e.target.style.backgroundColor = '#8e24aa'}
+          onMouseLeave={(e) => e.target.style.backgroundColor = '#9c27b0'}
+        >
+          Publish
+        </Button>
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
           <MenuItem 
             onClick={() => document.getElementById('bulk-upload-input').click()}
@@ -189,7 +197,7 @@ const HrUpload = () => {
           onChange={handleFileSelect}
         />
       </Box>
-
+  
       <Dialog open={submitDialogOpen} onClose={() => setSubmitDialogOpen(false)}>
         <DialogTitle style={{ fontWeight: 'bold' }}>Confirm Upload</DialogTitle>
         <DialogContent>
@@ -204,7 +212,7 @@ const HrUpload = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
+  
       <Grid container spacing={3}>
         {questions.map((question) => (
           <Grid item xs={12} sm={6} md={4} key={question.id}>
@@ -248,7 +256,7 @@ const HrUpload = () => {
           </Grid>
         ))}
       </Grid>
-      
+  
       <Dialog open={deleteConfirm} onClose={() => setDeleteConfirm(false)}>
         <DialogTitle style={{ fontWeight: 'bold' }}>Confirm Deletion</DialogTitle>
         <DialogContent>
@@ -265,6 +273,5 @@ const HrUpload = () => {
       </Dialog>
     </Box>
   );
-};
-
+};  
 export default HrUpload;

@@ -18,11 +18,11 @@ function App() {
         <Route path="/SelectTestOption" element={<SelectTestOption />} />
         <Route path="/FileUpload" element={<FileUpload />} />
         <Route path="/ManualSelectUI" element={<ManualSelectUI />} />
-        <Route path="/HrUpload" element={<HrUpload />} />
+        <Route path="/HrUpload/:contestId" element={<HrUpload />} />
         <Route path="/OnebyOne" element={<OnebyOne />} />
         <Route path="/AutoContest" element={<AutoContest />} />
         <Route path="/contest" element={<ContestPage />} />
-        <Route path="/ManualPage" element={<ManualPage />} /> {/* Add ManualPage route */}
+        <Route path="/ManualPage/:contestId" element={<ManualPage />} /> {/* Add ManualPage route */}
       </Routes>
     </Router>
   );

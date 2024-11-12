@@ -28,14 +28,24 @@ function CreateContest() {
     });
   };
 
+  // Function to generate a unique contest ID
+  const generateContestId = () => {
+    return 'contest_' + Date.now() + Math.random().toString(36).substring(2, 8);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
       const startDateTime = `${formData.startDate}T${formData.startTime}`;
       const endDateTime = formData.noEndTime ? null : `${formData.endDate}T${formData.endTime}`;
       
+      // Create a unique contest_id (could use a library like uuid or generate with the backend)
+      const contestId = `${Math.random().toString(36).substr(2, 9)}`; // simple random ID
+  
+      // Send data to backend
       const response = await axios.post('http://localhost:8000/contestdetails/', {
+        contest_id: contestId, // Include contest_id in the request
         contest_name: formData.contestName,
         start_time: startDateTime,
         end_time: endDateTime,
@@ -43,34 +53,34 @@ function CreateContest() {
         organization_name: formData.organizationName,
         ContestType: formData.TestType,
       });
-
+  
       // Display success toast message
       toast.success('Test Published successfully!', {
         position: "top-right",
-        autoClose: 1000, // 2 seconds
+        autoClose: 1000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
       });
-
+  
       // Delay navigation to allow toast to display
       setTimeout(() => {
-        // Navigate based on TestType selection after successful form submission
+        // Navigate based on TestType selection, with contest ID in the URL
         if (formData.TestType === "Auto") {
-          navigate("/HrUpload");
+          navigate(`/HrUpload/${contestId}`);
         } else if (formData.TestType === "Manual") {
-          navigate("/ManualPage");
+          navigate(`/ManualPage/${contestId}`);
         }
       }, 2000); // 2-second delay to match autoClose duration
-
+  
       console.log('API response:', response.data);
       console.log("Details saved successfully!");
-
+  
     } catch (error) {
       console.error('Error saving contest details:', error);
-
+  
       // Display error toast message
       toast.error('There was an error saving the contest details. Please try again.', {
         position: "top-right",
@@ -83,6 +93,7 @@ function CreateContest() {
       });
     }
   };
+  
 
   return (
     <div className="container mx-auto p-4 max-w-lg">
@@ -210,7 +221,6 @@ function CreateContest() {
         </form>
       </div>
 
-      {/* ToastContainer for displaying toast notifications */}
       <ToastContainer />
     </div>
   );

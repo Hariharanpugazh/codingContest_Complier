@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { Button, Typography, Box, Dialog, DialogActions, DialogContent, DialogTitle, Menu, MenuItem } from '@mui/material';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom'; // Import useParams
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import CreateIcon from '@mui/icons-material/Create';
 
 const ManualPage = () => {
+  const { contestId } = useParams(); // Get contestId from URL
   const [selectedFile, setSelectedFile] = useState(null);
   const [submitDialogOpen, setSubmitDialogOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -76,7 +77,12 @@ const ManualPage = () => {
   };
 
   return (
-    <Box p={4}>
+    <Box p={4} position="relative">
+      {/* Display contestId in the top left corner */}
+      <Typography variant="body1" style={{ position: 'absolute', top: 16, left: 16, fontWeight: 'bold' }}>
+        Contest ID: {contestId}
+      </Typography>
+
       <Typography variant="h4" align="center" gutterBottom style={{ fontWeight: 'bold', marginBottom: '20px' }}>
         Manual Upload
       </Typography>
