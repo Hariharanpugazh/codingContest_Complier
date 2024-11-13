@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Contest</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .description {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #444;
+            font-weight: bold;
+        }
+        .required {
+            color: red;
+        }
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .time-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .time-group input[type="date"] {
+            flex: 2;
+        }
+        .time-group input[type="time"] {
+            flex: 1;
+        }
+        .checkbox-group {
+            margin-top: 5px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Create Contest</h1>
+        <p class="description">
+            Host your own coding contest on HackerRank. You can practice and compete with friends from your
+            organization or school. Select from our library of over 1,500 coding challenges or create your own.
+        </p>
+        <form action="/submit" method="POST">
+            <div class="form-group">
+                <label>Contest Name <span class="required">*</span></label>
+                <input type="text" name="contestName" required>
+            </div>
+
+            <div class="form-group">
+                <label>Start Time <span class="required">*</span></label>
+                <div class="time-group">
+                    <input type="date" name="startDate" required>
+                    <input type="time" name="startTime" required>
+                    <span>IST</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>End Time <span class="required">*</span></label>
+                <div class="time-group">
+                    <input type="date" name="endDate">
+                    <input type="time" name="endTime">
+                    <span>IST</span>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="noEndTime" name="noEndTime">
+                    <label for="noEndTime" style="display: inline;">This contest has no end time.</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Organization Type <span class="required">*</span></label>
+                <select name="organizationType" required>
+                    <option value="">Select organization type</option>
+                    <option value="School">School</option>
+                    <option value="Company">Company</option>
+                    <option value="University">University</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Organization Name <span class="required">*</span></label>
+                <input type="text" name="organizationName" required>
+            </div>
+
+            <button type="submit">Get Started</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('noEndTime').addEventListener('change', function() {
+            const endDate = document.querySelector('input[name="endDate"]');
+            const endTime = document.querySelector('input[name="endTime"]');
+            
+            endDate.required = !this.checked;
+            endTime.required = !this.checked;
+            endDate.disabled = this.checked;
+            endTime.disabled = this.checked;
+        });
+    </script>
+</body>
+</html>

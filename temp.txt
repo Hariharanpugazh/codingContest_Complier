@@ -1,0 +1,8 @@
+{
+    "contest_name": "Hari",
+    "start_time": "2024-11-04 10:45",
+    "end_time": "2024-11-05 10:45",
+    "organization_type": "School",
+    "oraganization_name": "SNS"
+}
+test 
