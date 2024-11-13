@@ -1,0 +1,11 @@
+{
+  "name": "nodeui",
+  "version": "1.0.0",
+  "description": "Contest creation form application",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "body-parser": "^1.19.0",
+    "csv-writer": "^1.6.0"
+  }
+}
