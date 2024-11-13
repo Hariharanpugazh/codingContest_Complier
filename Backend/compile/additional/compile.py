@@ -24,9 +24,9 @@ def compilation(source_code, input_data, expected_output, language):
         with open(host_source_file_path, "w") as source_file:
             source_file.write(source_code)
 
-        # Write the input data to a file in temp_dir
+        # Convert input_data items to strings and write them to a file in temp_dir
         with open(host_input_file_path, "w") as input_file:
-            input_file.write("\n".join(input_data))
+            input_file.write("\n".join(map(str, input_data)))  # Convert each item to a string
 
         # Define paths for source code and input file in the Docker container
         container_source_file_path = f"/code/code.{ext}"
@@ -62,8 +62,6 @@ def compilation(source_code, input_data, expected_output, language):
             os.remove(host_source_file_path)
         if os.path.exists(host_input_file_path):
             os.remove(host_input_file_path)
-
-
 
 
 

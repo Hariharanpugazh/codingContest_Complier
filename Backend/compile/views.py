@@ -13,7 +13,7 @@ db = client['Coding_Platform']
 temp_questions_collection = db['tempQuestions']
 
 
-PROBLEMS_FILE_PATH = os.path.join('compile/jsonfiles', 'questions.json')
+PROBLEMS_FILE_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'Frontend', 'public', 'json', 'questions.json')
 
 @csrf_exempt
 def compileCode(request):

@@ -1,21 +1,25 @@
-// src/components/ProblemDetails.js
 import React, { useEffect, useState } from 'react';
 
 function ProblemDetails({ selectedProblemId }) {
   const [problem, setProblem] = useState(null);
 
-  // Load JSON data and find the selected problem
   useEffect(() => {
     fetch('/json/questions.json')
       .then((response) => response.json())
       .then((data) => {
+        console.log("Data fetched:", data);
+        
+        const idToFind = parseInt(selectedProblemId, 10);
         const selectedProblem = data.problems.find(
-          (problem) => problem.id === parseInt(selectedProblemId)
-          
+          (problem) => problem.id === idToFind
         );
-        console.log("geted")
-        setProblem(selectedProblem);
-        console.log(setProblem(selectedProblem))
+
+        if (selectedProblem) {
+          setProblem(selectedProblem);
+        } else {
+          console.warn(`Problem with ID ${idToFind} not found. Defaulting to first problem.`);
+          setProblem(data.problems[0]); // Default to the first problem
+        }
       })
       .catch((error) => console.error("Error loading JSON:", error));
   }, [selectedProblemId]);

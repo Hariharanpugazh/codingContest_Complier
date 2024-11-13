@@ -9,7 +9,7 @@ client = MongoClient('mongodb://localhost:27017/')
 db = client['Coding_Platform']
 questions_collection = db['Questions_Library']
 temp_questions_collection = db['tempQuestions']
-
+final_questions_collection = db['finalQuestions']
 def fetch_Questions(request):
     """
     Fetches questions from `tempQuestions`. If `tempQuestions` is empty,
@@ -91,29 +91,37 @@ def save_problem_data(new_problem):
 @csrf_exempt 
 def publish_questions(request):
     """
-    Clears FinalQuestions, then copies questions from tempQuestions to FinalQuestions,
-    including contestId if provided.
+    Moves questions from tempQuestions to finalQuestions with the contestId passed in the request body.
+    Clears FinalQuestions collection before copying and adds the contestId as a single document.
     """
     if request.method == 'POST':
         try:
             # Parse JSON data from the request to get contestId
             data = json.loads(request.body)
             contest_id = data.get('contestId')
+            print("Received contestId:", contest_id)  # Debugging line
 
-            # Connect to the MongoDB collections
-            final_questions_collection = db['FinalQuestions']
+            # Check if contest_id is provided
+            if not contest_id:
+                return JsonResponse({'error': 'contestId is missing in the request'}, status=400)
+
+            # Retrieve questions from tempQuestions
             temp_questions = temp_questions_collection.find({}, {'problems': 1, '_id': 0})
-            
+
+            # Extract problems from all documents in tempQuestions
+            all_problems = []
+            for document in temp_questions:
+                all_problems.extend(document.get("problems", []))
+
             # Clear FinalQuestions collection before copying
             final_questions_collection.delete_many({})
-            
-            # Copy each problem from tempQuestions to FinalQuestions
-            for document in temp_questions:
-                # Add contestId to each document if provided
-                if contest_id:
-                    document['contestId'] = contest_id
-                final_questions_collection.insert_one(document)
 
+            # Insert a single document with contestId and problems array
+            final_questions_collection.insert_one({
+                "contestId": contest_id,
+                "problems": all_problems
+            })
+            
             return JsonResponse({'message': 'Questions published successfully! FinalQuestions collection has been updated.'}, status=200)
 
         except Exception as e:
@@ -122,6 +130,7 @@ def publish_questions(request):
             return JsonResponse({'error': 'Failed to publish questions'}, status=500)
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=405)
+
 
 
 @csrf_exempt

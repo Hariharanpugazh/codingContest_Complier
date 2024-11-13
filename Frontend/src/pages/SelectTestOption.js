@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import FileUpload from './FileUpload';
-import AutoCOntest from './AutoContest'
+import StartContest from './StartContest'
 
 const AutoManualUI = () => {
   const navigate = useNavigate();
@@ -10,7 +10,7 @@ const AutoManualUI = () => {
     navigate('/FileUpload'); // Navigates to the FileUploadWithModal page
   };
   const handleAutoCLick = () => {
-    navigate('/AutoContest'); // Navigates to the FileUploadWithModal page
+    navigate('/StartContest'); // Navigates to the FileUploadWithModal page
   };
 
   return (

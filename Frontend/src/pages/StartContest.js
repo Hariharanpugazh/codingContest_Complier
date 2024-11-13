@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Navigate } from 'react-router-dom';
-import contest from './ContestPage'
 import { useNavigate } from 'react-router-dom';
 
 function CreateProfile() {
@@ -10,7 +8,8 @@ function CreateProfile() {
   const [formData, setFormData] = useState({
     name: '',
     role: '',
-    skills: []
+    skills: [],
+    contest_id: '' // New state for contest ID
   });
   
   const roles = ['Junior Software Developer', 'Senior Software Developer', 'AI Developer'];
@@ -40,20 +39,32 @@ function CreateProfile() {
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.post('http://localhost:8000/autocontest/', {
+      // Save contest data
+      const contestResponse = await axios.post('http://localhost:8000/autocontest/', {
         role: formData.role,
+        contest_id: formData.contest_id,  // Include contest_id in the request
       });
-      alert('Test started successfully!');
-      console.log('API response:', response.data);
+  
+      console.log('Contest API response:', contestResponse.data);
+      
+      // Save user information in User_info collection
+      const userResponse = await axios.post('http://localhost:8000/userinfo/', {
+        name: formData.name,
+        role: formData.role,
+        skills: formData.skills,
+        contest_id: formData.contest_id
+      });
+  
+      console.log('User info API response:', userResponse.data);
+      alert('Test started and user information saved successfully!');
       navigate('/Contest');
-
     } 
-    
     catch (error) {
-      console.error('Error starting test:', error);
-      alert('There was an error starting the test. Please try again.');
+      console.error('Error starting test or saving user information:', error);
+      alert('There was an error starting the test or saving user information. Please try again.');
     }
   };
+  
 
   return (
     <div className="container mx-auto p-6 max-w-md">
@@ -90,7 +101,7 @@ function CreateProfile() {
           </select>
         </div>
 
-        <div className="mb-6">
+        <div className="mb-4">
           <label className="block font-semibold text-gray-600 mb-2">Skills <span className="text-red-500">*</span></label>
           <select
             name="skills"
@@ -104,6 +115,19 @@ function CreateProfile() {
             ))}
           </select>
           <p className="text-sm text-gray-500 mt-2">Hold down the Ctrl (Windows) or Command (Mac) button to select multiple options.</p>
+        </div>
+
+        <div className="mb-6">
+          <label className="block font-semibold text-gray-600 mb-2">Contest ID <span className="text-red-500">*</span></label>
+          <input
+            type="text"
+            name="contest_id"
+            value={formData.contest_id}
+            onChange={handleInputChange}
+            required
+            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
+            placeholder="Enter Contest ID"
+          />
         </div>
 
         <button

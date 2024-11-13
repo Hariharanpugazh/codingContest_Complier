@@ -1,47 +1,6 @@
 {
   "problems": [
     {
-      "id": 29,
-      "title": "Calculate LCM of Two Numbers",
-      "role": [
-        "Senior Software Developer"
-      ],
-      "level": "medium",
-      "problem_statement": "Write a function that calculates the least common multiple of two numbers.",
-      "samples": [
-        {
-          "input": [
-            4,
-            5
-          ],
-          "output": 20
-        },
-        {
-          "input": [
-            7,
-            3
-          ],
-          "output": 21
-        }
-      ],
-      "hidden_samples": [
-        {
-          "input": [
-            15,
-            20
-          ],
-          "output": 60
-        },
-        {
-          "input": [
-            9,
-            12
-          ],
-          "output": 36
-        }
-      ]
-    },
-    {
       "id": 7,
       "title": "Fibonacci Sequence",
       "role": [
@@ -75,6 +34,43 @@
             15
           ],
           "output": 610
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "title": "Check for Prime Number",
+      "role": [
+        "Senior Software Developer"
+      ],
+      "level": "medium",
+      "problem_statement": "Write a function that checks if a number is a prime number.",
+      "samples": [
+        {
+          "input": [
+            5
+          ],
+          "output": true
+        },
+        {
+          "input": [
+            8
+          ],
+          "output": false
+        }
+      ],
+      "hidden_samples": [
+        {
+          "input": [
+            13
+          ],
+          "output": true
+        },
+        {
+          "input": [
+            16
+          ],
+          "output": false
         }
       ]
     },

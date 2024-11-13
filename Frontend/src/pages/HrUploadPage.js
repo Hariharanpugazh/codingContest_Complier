@@ -5,8 +5,10 @@ import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import CreateIcon from '@mui/icons-material/Create';
+import { useParams } from 'react-router-dom';
 
 const HrUpload = () => {
+  const { contestId } = useParams();
   const [questions, setQuestions] = useState([]);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [selectedQuestionId, setSelectedQuestionId] = useState(null);
@@ -93,9 +95,13 @@ const HrUpload = () => {
 
   const handlePublish = async () => {
     try {
-      const response = await axios.post('http://localhost:8000/publish/');
+      const response = await axios.post(
+        'http://localhost:8000/publish/',
+        { contestId: contestId }, // Send contestId in the request body
+      );
       if (response.status === 200) {
         alert('Questions published successfully!');
+        navigate('/')
       } else {
         alert('Failed to publish questions.');
       }

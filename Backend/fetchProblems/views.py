@@ -2,137 +2,73 @@ from django.http import JsonResponse
 from pymongo import MongoClient
 from bson import ObjectId
 import json
+import os
 from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
-from django.views.decorators.http import require_http_methods
 
 # Establish a single MongoDB client and database instance
 client = MongoClient('mongodb://localhost:27017/')
 db = client['Coding_Platform']
-questions_collection = db['Questions_Library'] 
-
-def fetch_AutoSelect_problems(request):
-    # Access the AutoSelect collection
-    collection = db['AutoSelect']
-
-    # Fetch only the 'problems' field from each document in AutoSelect
-    documents = collection.find({}, {'problems': 1, '_id': 0})  # Retrieve only the 'problems' field and exclude '_id'
-
-    # Flatten the problems into a single list to return as JSON
-    problems = [problem for document in documents for problem in document.get('problems', [])]
-
-    return JsonResponse({'problems': problems})
-
-def fetch_Questions(request):
-    # Access the AutoSelect collection
-    collection = db['Questions_Library']
-
-    # Fetch only the 'problems' field from each document in AutoSelect
-    documents = collection.find({}, {'problems': 1, '_id': 0})  # Retrieve only the 'problems' field and exclude '_id'
-
-    # Flatten the problems into a single list to return as JSON
-    problems = [problem for document in documents for problem in document.get('problems', [])]
-
-    return JsonResponse({'problems': problems})
-
-@csrf_exempt  # This disables CSRF protection for this view
-@require_http_methods(["POST"])
-def get_question_by_id(request):
-    """
-    Retrieves a specific problem from the problems array based on the question ID.
-    """
-    try:
-        # Parse JSON data from the POST request
-        data = json.loads(request.body)
-        question_id = data.get("id")  # Assume the POST request contains {"id": <question_id>}
-
-        # Find the document with a problem matching the provided `id` within the problems array
-        document = questions_collection.find_one({"problems.id": question_id})
-
-        # Check if the document was found
-        if document:
-            # Search for the specific problem within the `problems` array
-            problem = next((p for p in document['problems'] if p['id'] == question_id), None)
-
-            if problem:
-                return JsonResponse({"status": "success", "problem": problem}, status=200)
-            else:
-                return JsonResponse({"status": "error", "message": "Problem not found in problems array."}, status=404)
-        else:
-            return JsonResponse({"status": "error", "message": "Question document not found."}, status=404)
-    except Exception as e:
-        return JsonResponse({"status": "error", "message": str(e)}, status=500)
-
-def fetch_FileUpload_problems(request):
-    # Access the FileUpload collection
-    collection = db['FileUpload']
-
-    # Fetch all documents from FileUpload collection and convert ObjectId to string
-    problems = []
-    for document in collection.find({}):
-        document['_id'] = str(document['_id'])  # Convert ObjectId to string
-        problems.append(document)
-
-    return JsonResponse({'problems': problems}, safe=False)
-
-
-def fetch_ManualUpload_problems(request):
-    # Access the ManualUpload_onebyone collection
-    collection = db['ManualUpload_onebyone']
-
-    # Fetch all documents with all fields and convert ObjectId to string
-    problems = []
-    for document in collection.find({}):
-        document['_id'] = str(document['_id'])  # Convert ObjectId to string for JSON serialization
-        problems.append(document)
-
-    return JsonResponse({'problems': problems}, safe=False)
-
-def update_question_by_id(request):
-    """
-    Updates a specific problem in the questions array based on the question ID.
-    """
-    try:
-        # Parse JSON data from the PUT request
-        data = json.loads(request.body)
-        question_id = data.get("id")  # Assume the PUT request contains {"id": <question_id>, ...other fields...}
-        
-        # Find and update the problem with the specified ID in the `problems` array
-        result = questions_collection.update_one(
-            {"problems.id": question_id},
-            {"$set": {"problems.$": data}}  # Replace the specific problem document in the array
-        )
-
-        if result.matched_count > 0:
-            return JsonResponse({"status": "success", "message": "Problem updated successfully."}, status=200)
-        else:
-            return JsonResponse({"status": "error", "message": "Problem not found."}, status=404)
-    except Exception as e:
-        return JsonResponse({"status": "error", "message": str(e)}, status=500)
-
+questions_collection = db['finalQuestions'] 
 
 @csrf_exempt
-@require_http_methods(["DELETE"])
-def delete_question_by_id(request):
-    """
-    Deletes a specific problem from the questions array based on the question ID.
-    """
+def fetch_Questions(request):
+    # Access the finalQuestions collection
+    collection = db['finalQuestions']
+
+    # Fetch the document with the contestId, assuming there's only one
+    document = collection.find_one({}, {'problems': 1, '_id': 0})  # Retrieve only the 'problems' field and exclude '_id'
+
+    # If no document is found, return an empty problems array
+    if not document:
+        return JsonResponse({'problems': []})
+
+    # Extract the problems list from the document
+    problems = document.get('problems', [])
+
+    # Format the problems as required
+    formatted_problems = []
+    for problem in problems:
+        formatted_problem = {
+            "id": problem.get("id"),
+            "title": problem.get("title"),
+            "level": problem.get("level"),
+            "problem_statement": problem.get("problem_statement"),
+            "samples": [
+                {"input": sample.get("input"), "output": sample.get("output")}
+                for sample in problem.get("samples", [])
+            ],
+            "hidden_samples": [
+                {"input": hidden_sample.get("input"), "output": hidden_sample.get("output")}
+                for hidden_sample in problem.get("hidden_samples", [])
+            ]
+        }
+        formatted_problems.append(formatted_problem)
+
+    # Return the formatted response
+    return JsonResponse({'problems': formatted_problems})
+
+
+
+def fetch_and_save_questions(request):
+    # Path to the frontend's public/json/questions.json file
+    # Adjust the path to your actual frontend directory
+    file_path = os.path.join(os.path.dirname(__file__), '..', '..', 'Frontend', 'public', 'json', 'questions.json')
+
+    # Fetch data from MongoDB
+    document = questions_collection.find_one({}, {'problems': 1, '_id': 0})
+    if not document:
+        return JsonResponse({'error': 'No data found in finalQuestions collection'}, status=404)
+
+    # Prepare the data for saving
+    data_to_save = {'problems': document.get('problems', [])}
+
+    # Write the fetched data to questions.json
     try:
-        # Parse JSON data from the DELETE request
-        data = json.loads(request.body)
-        question_id = data.get("id")  # Assume the DELETE request contains {"id": <question_id>}
-
-        # Remove the specific problem with the given `id` from the `problems` array
-        result = questions_collection.update_one(
-            {"problems.id": question_id},
-            {"$pull": {"problems": {"id": question_id}}}
-        )
-
-        if result.modified_count > 0:
-            return JsonResponse({"status": "success", "message": "Problem deleted successfully."}, status=200)
-        else:
-            return JsonResponse({"status": "error", "message": "Problem not found."}, status=404)
+        with open(file_path, 'w') as file:
+            json.dump(data_to_save, file, indent=2)
+        print('Data successfully written to questions.json')
     except Exception as e:
-        return JsonResponse({"status": "error", "message": str(e)}, status=500)
+        return JsonResponse({'error': f'Failed to save JSON file: {str(e)}'}, status=500)
 
-
+    # Return the fetched data as a JSON response
+    return JsonResponse(data_to_save)
