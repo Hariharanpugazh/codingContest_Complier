@@ -35,6 +35,8 @@ def fetch_Questions(request):
     return JsonResponse({'problems': temp_problems})
 
 
+from bson import ObjectId
+
 def save_problem_data(new_problem):
     """
     Adds a new problem to the problems array in tempQuestions. If a document with ObjectId already exists,
@@ -52,8 +54,8 @@ def save_problem_data(new_problem):
             "hidden_samples": new_problem.get('hidden_samples', [])
         }
         
-        # Specify the main document ID for tempQuestions
-        main_document_id = '6731ed9e1005131d602865de'  # Replace with actual ObjectId if needed
+        # Convert the main document ID to ObjectId
+        main_document_id = ObjectId('6731ed9e1005131d602865de')
         existing_document = temp_questions_collection.find_one({'_id': main_document_id})
 
         if existing_document:
@@ -89,10 +91,15 @@ def save_problem_data(new_problem):
 @csrf_exempt 
 def publish_questions(request):
     """
-    Clears FinalQuestions, then copies questions from tempQuestions to FinalQuestions.
+    Clears FinalQuestions, then copies questions from tempQuestions to FinalQuestions,
+    including contestId if provided.
     """
     if request.method == 'POST':
         try:
+            # Parse JSON data from the request to get contestId
+            data = json.loads(request.body)
+            contest_id = data.get('contestId')
+
             # Connect to the MongoDB collections
             final_questions_collection = db['FinalQuestions']
             temp_questions = temp_questions_collection.find({}, {'problems': 1, '_id': 0})
@@ -102,6 +109,9 @@ def publish_questions(request):
             
             # Copy each problem from tempQuestions to FinalQuestions
             for document in temp_questions:
+                # Add contestId to each document if provided
+                if contest_id:
+                    document['contestId'] = contest_id
                 final_questions_collection.insert_one(document)
 
             return JsonResponse({'message': 'Questions published successfully! FinalQuestions collection has been updated.'}, status=200)
@@ -112,6 +122,7 @@ def publish_questions(request):
             return JsonResponse({'error': 'Failed to publish questions'}, status=500)
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=405)
+
 
 @csrf_exempt
 def modify_problem_data(new_problem):

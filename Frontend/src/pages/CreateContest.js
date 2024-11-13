@@ -2,7 +2,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import SelectTestOption from './SelectTestOption'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function CreateContest() {
   const navigate = useNavigate();
@@ -27,13 +28,10 @@ function CreateContest() {
     });
   };
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   // Perform any necessary form validation or data submission logic here
-
-  //   // Redirect to Contest Challenges page after form submission
-  //   navigate('/contest-challenges');
-  // };
+  // Function to generate a unique contest ID
+  const generateContestId = () => {
+    return 'contest_' + Date.now() + Math.random().toString(36).substring(2, 8);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,27 +40,61 @@ function CreateContest() {
       const startDateTime = `${formData.startDate}T${formData.startTime}`;
       const endDateTime = formData.noEndTime ? null : `${formData.endDate}T${formData.endTime}`;
       
+      // Create a unique contest_id (could use a library like uuid or generate with the backend)
+      const contestId = `${Math.random().toString(36).substr(2, 9)}`; // simple random ID
+  
+      // Send data to backend
       const response = await axios.post('http://localhost:8000/contestdetails/', {
+        contest_id: contestId, // Include contest_id in the request
         contest_name: formData.contestName,
         start_time: startDateTime,
         end_time: endDateTime,
         organization_type: formData.organizationType,
         organization_name: formData.organizationName,
-        ContestType:formData.TestType,
+        ContestType: formData.TestType,
       });
-      
-      alert('Test Published successfully!');
+  
+      // Display success toast message
+      toast.success('Test Published successfully!', {
+        position: "top-right",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+  
+      // Delay navigation to allow toast to display
+      setTimeout(() => {
+        // Navigate based on TestType selection, with contest ID in the URL
+        if (formData.TestType === "Auto") {
+          navigate(`/HrUpload/${contestId}`);
+        } else if (formData.TestType === "Manual") {
+          navigate(`/ManualPage/${contestId}`);
+        }
+      }, 2000); // 2-second delay to match autoClose duration
+  
       console.log('API response:', response.data);
-      
-      
-      // Redirect to Contest Challenges page after successful submission
-      console.log("Details saved successfully!")
+      console.log("Details saved successfully!");
+  
     } catch (error) {
       console.error('Error saving contest details:', error);
-      alert('There was an error saving the contest details. Please try again.');
+  
+      // Display error toast message
+      toast.error('There was an error saving the contest details. Please try again.', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     }
   };
   
+
   return (
     <div className="container mx-auto p-4 max-w-lg">
       <div className="bg-white shadow p-6 rounded-lg">
@@ -180,8 +212,6 @@ function CreateContest() {
               <option value="">Select Test type</option>
               <option value="Manual">Manual</option>
               <option value="Auto">Auto</option>
-              {/* <option value="University">University</option>
-              <option value="Other">Other</option> */}
             </select>
           </div>
 
@@ -190,6 +220,8 @@ function CreateContest() {
           </button>
         </form>
       </div>
+
+      <ToastContainer />
     </div>
   );
 }
