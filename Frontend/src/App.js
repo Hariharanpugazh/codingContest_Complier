@@ -28,6 +28,7 @@ function App() {
         <Route path="/OnebyOne" element={<OnebyOne />} /> {/* Add this route */}
         <Route path="/AutoContest" element={<AutoContest />} />
         <Route path="/contest" element={<ContestPage />} />
+        
       </Routes>
     </Router>
   );
