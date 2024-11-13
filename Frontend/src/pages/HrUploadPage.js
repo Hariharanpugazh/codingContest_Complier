@@ -92,9 +92,9 @@ const HrUpload = () => {
     handleMenuClose();
   };
 
-  const handlePublish = async () => {
+  const handlePublish = async (contestId) => {
     try {
-      const response = await axios.post('http://localhost:8000/publish/');
+      const response = await axios.post('http://localhost:8000/publish/', { contestId });
       if (response.status === 200) {
         alert('Questions published successfully!');
       } else {
@@ -105,6 +105,7 @@ const HrUpload = () => {
       alert('An error occurred while publishing questions.');
     }
   };
+  
 
   return (
     <Box p={4}>
@@ -142,7 +143,7 @@ const HrUpload = () => {
         <Button 
           variant="contained" 
           color="secondary" 
-          onClick={handlePublish} 
+          onClick={() => handlePublish(contestId)} 
           style={{
             marginLeft: '10px',
             fontWeight: 'bold',
