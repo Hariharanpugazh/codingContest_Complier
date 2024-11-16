@@ -1,0 +1,29 @@
+{
+    "problems": [
+        {
+            "id": 2,
+            "title": "test",
+            "role": [
+                "Junior Developer"
+            ],
+            "level": "easy",
+            "problem_statement": "asdf",
+            "samples": [
+                {
+                    "input": [
+                        "1"
+                    ],
+                    "output": "1"
+                }
+            ],
+            "hidden_samples": [
+                {
+                    "input": [
+                        "1"
+                    ],
+                    "output": "1"
+                }
+            ]
+        }
+    ]
+}

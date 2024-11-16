@@ -1,0 +1,115 @@
+{
+  "problems": [
+    {
+      "id": 24,
+      "title": "Check for Prime Number",
+      "role": [
+        "Senior Software Developer"
+      ],
+      "level": "medium",
+      "problem_statement": "Write a function that checks if a number is a prime number.",
+      "samples": [
+        {
+          "input": [
+            5
+          ],
+          "output": true
+        },
+        {
+          "input": [
+            8
+          ],
+          "output": false
+        }
+      ],
+      "hidden_samples": [
+        {
+          "input": [
+            13
+          ],
+          "output": true
+        },
+        {
+          "input": [
+            16
+          ],
+          "output": false
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "title": "Count Characters in String",
+      "role": [
+        "Junior Software Developer"
+      ],
+      "level": "easy",
+      "problem_statement": "Write a function that takes a string as input and returns the number of characters in the string.",
+      "samples": [
+        {
+          "input": [
+            "hello"
+          ],
+          "output": 5
+        },
+        {
+          "input": [
+            "world!"
+          ],
+          "output": 6
+        }
+      ],
+      "hidden_samples": [
+        {
+          "input": [
+            "OpenAI"
+          ],
+          "output": 6
+        },
+        {
+          "input": [
+            "test123"
+          ],
+          "output": 7
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Fibonacci Sequence",
+      "role": [
+        "Senior Software Developer"
+      ],
+      "level": "hard",
+      "problem_statement": "Write a function that returns the nth Fibonacci number.",
+      "samples": [
+        {
+          "input": [
+            5
+          ],
+          "output": 5
+        },
+        {
+          "input": [
+            7
+          ],
+          "output": 13
+        }
+      ],
+      "hidden_samples": [
+        {
+          "input": [
+            10
+          ],
+          "output": 55
+        },
+        {
+          "input": [
+            15
+          ],
+          "output": 610
+        }
+      ]
+    }
+  ]
+}
