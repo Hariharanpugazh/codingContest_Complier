@@ -4,27 +4,31 @@ function ProblemDetails({ selectedProblemId }) {
   const [problem, setProblem] = useState(null);
 
   useEffect(() => {
+    // Fetch the JSON file when the component mounts or when selectedProblemId changes
     fetch('/json/questions.json')
       .then((response) => response.json())
       .then((data) => {
         console.log("Data fetched:", data);
-        
-        const idToFind = parseInt(selectedProblemId, 10);
+
+        const idToFind = parseInt(selectedProblemId, 10); // Convert to integer
         const selectedProblem = data.problems.find(
           (problem) => problem.id === idToFind
         );
 
         if (selectedProblem) {
-          setProblem(selectedProblem);
+          setProblem(selectedProblem); // Set the found problem
         } else {
           console.warn(`Problem with ID ${idToFind} not found. Defaulting to first problem.`);
-          setProblem(data.problems[0]); // Default to the first problem
+          setProblem(data.problems[0]); // Default to the first problem if not found
         }
       })
-      .catch((error) => console.error("Error loading JSON:", error));
-  }, [selectedProblemId]);
+      .catch((error) => {
+        console.error("Error loading JSON:", error);
+        // Handle errors if needed, like showing an error message
+      });
+  }, [selectedProblemId]); // Re-run the effect when selectedProblemId changes
 
-  if (!problem) return <div>Loading...</div>;
+  if (!problem) return <div>Loading...</div>; // Loading state while problem is being fetched
 
   return (
     <div className="mb-4">

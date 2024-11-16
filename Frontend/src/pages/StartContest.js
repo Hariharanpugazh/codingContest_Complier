@@ -37,43 +37,50 @@ function CreateProfile() {
     });
   };
 
-
   const handleSubmit = async () => {
-    try {
-        // Navigate first before making the API calls
-        navigate('/Contest');
-
-        // Save contest data
-        const contestResponse = await axios.post('http://localhost:8000/autocontest/', {
-            role: formData.role,
-            contest_id: formData.contest_id,  // Include contest_id in the request
-        });
-        
-        console.log('Contest API response:', contestResponse.data);
-
-        // Save user information in User_info collection
-        const userResponse = await axios.post('http://localhost:8000/userinfo/', {
-            name: formData.name,
-            role: formData.role,
-            skills: formData.skills,
-            contest_id: formData.contest_id,
-        });
-
-        const filteredProblemsResponse = await axios.get('http://localhost:8000/get_filtered_problems/', {
-            params: {
-                role: formData.role.trim(),
-                count: 5,
-            },
-        });
-
-        console.log('User info API response:', userResponse.data);
-        alert('Test started and user information saved successfully!');
-    } 
-    catch (error) {
-        console.error('Error starting test or saving user information:', error);
-        alert('There was an error starting the test or saving user information. Please try again.');
-    }
-};
+    const randomUrlId = Math.floor(100000 + Math.random() * 900000);
+    console.log('Navigating with ID:', randomUrlId);
+  
+    // Navigate first before making the API calls
+    navigate(`/Contest/${randomUrlId}`);
+  
+    axios.post('http://localhost:8000/autocontest/', {
+      role: formData.role,
+      contest_id: formData.contest_id, // Include contest_id in the request
+    })
+    .then(contestResponse => {
+      console.log('Contest API response:', contestResponse.data);
+  
+      // Save user information in User_info collection
+      return axios.post('http://localhost:8000/userinfo/', {
+        user_id: randomUrlId,
+        name: formData.name,
+        role: formData.role,
+        skills: formData.skills,
+        contest_id: formData.contest_id,
+      });
+    })
+    .then(userResponse => {
+      console.log('User info API response:', userResponse.data);
+  
+      // Fetch filtered problems data
+      return axios.get('http://localhost:8000/get_filtered_problems/', {
+        params: {
+          role: formData.role.trim(),
+          count: 5,
+        },
+      });
+    })
+    .then(filteredProblemsResponse => {
+      console.log('Filtered problems response:', filteredProblemsResponse.data);
+      alert('Test started and user information saved successfully!');
+    })
+    .catch(error => {
+      console.error('Error starting test or saving user information:', error);
+      alert('There was an error starting the test or saving user information. Please try again.');
+    });
+  };
+  
 
   
   

@@ -13,13 +13,13 @@
           "input": [
             5
           ],
-          "output": true
+          "output": "true"
         },
         {
           "input": [
             8
           ],
-          "output": false
+          "output": "false"
         }
       ],
       "hidden_samples": [
@@ -27,13 +27,13 @@
           "input": [
             13
           ],
-          "output": true
+          "output": "true"
         },
         {
           "input": [
             16
           ],
-          "output": false
+          "output": "false"
         }
       ]
     },

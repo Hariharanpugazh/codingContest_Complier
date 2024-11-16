@@ -22,7 +22,7 @@ function App() {
         <Route path="/HrUpload/:contestId" element={<HrUpload />} />
         <Route path="/OnebyOne" element={<OnebyOne />} />
         <Route path="/StartContest" element={<StartContest />} />
-        <Route path="/Contest" element={<ContestPage />} />
+        <Route path="/Contest/:id" element={<ContestPage />} />
         <Route path="/ManualPage/:contestId" element={<ManualPage />} /> {/* Add ManualPage route */}
       </Routes>
     </Router>
