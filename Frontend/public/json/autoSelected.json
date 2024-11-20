@@ -1,0 +1,143 @@
+{
+  "problems": [
+    {
+      "id": 7,
+      "title": "Fibonacci Sequence",
+      "role": [
+        "Senior Software Developer"
+      ],
+      "level": "hard",
+      "problem_statement": "Write a function that returns the nth Fibonacci number.",
+      "samples": [
+        {
+          "input": [
+            5
+          ],
+          "output": 5
+        },
+        {
+          "input": [
+            7
+          ],
+          "output": 13
+        }
+      ],
+      "hidden_samples": [
+        {
+          "input": [
+            10
+          ],
+          "output": 55
+        },
+        {
+          "input": [
+            15
+          ],
+          "output": 610
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "title": "Generate n Prime Numbers",
+      "role": [
+        "Senior Software Developer"
+      ],
+      "level": "medium",
+      "problem_statement": "Write a function that returns the first n prime numbers.",
+      "samples": [
+        {
+          "input": [
+            5
+          ],
+          "output": [
+            2,
+            3,
+            5,
+            7,
+            11
+          ]
+        },
+        {
+          "input": [
+            3
+          ],
+          "output": [
+            2,
+            3,
+            5
+          ]
+        }
+      ],
+      "hidden_samples": [
+        {
+          "input": [
+            8
+          ],
+          "output": [
+            2,
+            3,
+            5,
+            7,
+            11,
+            13,
+            17,
+            19
+          ]
+        },
+        {
+          "input": [
+            10
+          ],
+          "output": [
+            2,
+            3,
+            5,
+            7,
+            11,
+            13,
+            17,
+            19,
+            23,
+            29
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Count Vowels in a String",
+      "role": "Senior Software Developer",
+      "level": "easy",
+      "problem_statement": "Write a function that takes a string as input and returns the number of vowels in the string.",
+      "samples": [
+        {
+          "input": [
+            "example"
+          ],
+          "output": 3
+        },
+        {
+          "input": [
+            "programming"
+          ],
+          "output": 3
+        }
+      ],
+      "hidden_samples": [
+        {
+          "input": [
+            "hidden test"
+          ],
+          "output": 3
+        },
+        {
+          "input": [
+            "vowel count"
+          ],
+          "output": 4
+        }
+      ]
+    }
+  ]
+}

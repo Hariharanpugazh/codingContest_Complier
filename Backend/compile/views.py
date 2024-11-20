@@ -11,6 +11,8 @@ from pymongo import MongoClient
 client = MongoClient('mongodb://localhost:27017/')
 db = client['Coding_Platform']
 temp_questions_collection = db['tempQuestions']
+temp_submission_collection = db['tempSubmission']
+
 
 
 PROBLEMS_FILE_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'Frontend', 'public', 'json', 'questions.json')
@@ -22,7 +24,7 @@ def compileCode(request):
         # PROBLEMS_FILE_PATH = filepath.get_filepath()
         
         # print('PROBLEMS_FILE_PATH:',PROBLEMS_FILE_PATH)
-
+        print("Received compile request:", request.body)
         data = json.loads(request.body)
         user_code = data.get('user_code', '')
         language = data.get('language', '')
@@ -100,6 +102,41 @@ def userInput(request):
     print("Invalid request method")  # Debugging log if method is not POST
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
+
+@csrf_exempt
+def save_temp_submission(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            user_code = data.get('user_code')
+            language = data.get('language')
+            problem_id = data.get('problem_id')
+            user_id = data.get('user_id')  # Assuming user_id is passed
+            problem_data = data.get('problem_data')
+            passed = data.get('passed')  # Extract problem_data
+            failed = data.get('failed')
+            
+            if not (user_code and language and problem_id and user_id and problem_data):
+                return JsonResponse({'error': 'Missing required fields'}, status=400)
+
+            # Save to temp_submission collection
+            temp_submission = {
+                'user_id': user_id,
+                'problem_id': problem_id,
+                'language': language,
+                'user_code': user_code,
+                'problem_data': problem_data,
+                'passed':  passed,
+                'failed': failed,
+            }
+            temp_submission_collection.insert_one(temp_submission)
+
+            return JsonResponse({'message': 'Temporary submission saved successfully'}, status=201)
+        except Exception as e:
+            print('Error saving temporary submission:', e)
+            return JsonResponse({'error': 'Failed to save submission'}, status=500)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
 @csrf_exempt

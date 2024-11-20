@@ -38,32 +38,54 @@ function CreateProfile() {
   };
 
   const handleSubmit = async () => {
-    try {
-      // Save contest data
-      const contestResponse = await axios.post('http://localhost:8000/autocontest/', {
-        role: formData.role,
-        contest_id: formData.contest_id,  // Include contest_id in the request
-      });
+    const randomUrlId = Math.floor(100000 + Math.random() * 900000);
+    console.log('Navigating with ID:', randomUrlId);
   
+    // Navigate first before making the API calls
+    navigate(`/Contest/${randomUrlId}`);
+  
+    axios.post('http://localhost:8000/autocontest/', {
+      role: formData.role,
+      contest_id: formData.contest_id, // Include contest_id in the request
+    })
+    .then(contestResponse => {
       console.log('Contest API response:', contestResponse.data);
-      
+  
       // Save user information in User_info collection
-      const userResponse = await axios.post('http://localhost:8000/userinfo/', {
+      return axios.post('http://localhost:8000/userinfo/', {
+        user_id: randomUrlId,
         name: formData.name,
         role: formData.role,
         skills: formData.skills,
-        contest_id: formData.contest_id
+        contest_id: formData.contest_id,
       });
-  
+    })
+    .then(userResponse => {
       console.log('User info API response:', userResponse.data);
+  
+      // Fetch filtered problems data
+      return axios.get('http://localhost:8000/get_filtered_problems/', {
+        params: {
+          role: formData.role.trim(),
+          count: 5,
+        },
+      });
+    })
+    .then(filteredProblemsResponse => {
+      console.log('Filtered problems response:', filteredProblemsResponse.data);
       alert('Test started and user information saved successfully!');
-      navigate('/Contest');
-    } 
-    catch (error) {
+    })
+    .catch(error => {
       console.error('Error starting test or saving user information:', error);
       alert('There was an error starting the test or saving user information. Please try again.');
-    }
+    });
   };
+  
+
+  
+  
+  
+  
   
 
   return (
@@ -71,74 +93,86 @@ function CreateProfile() {
       <div className="bg-white shadow-lg p-8 rounded-lg transition hover:shadow-xl">
         <h1 className="text-3xl font-semibold text-gray-700 mb-4">Create Profile</h1>
         <p className="text-gray-500 mb-6">Enter your details to start the test.</p>
-
-        <div className="mb-4">
-          <label className="block font-semibold text-gray-600 mb-2">Name <span className="text-red-500">*</span></label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-            required
-            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
-            placeholder="Enter your name"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block font-semibold text-gray-600 mb-2">Role <span className="text-red-500">*</span></label>
-          <select
-            name="role"
-            value={formData.role}
-            onChange={handleInputChange}
-            required
-            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block font-semibold text-gray-600 mb-2">
+              Name <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleInputChange}
+              required
+              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              placeholder="Enter your name"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block font-semibold text-gray-600 mb-2">
+              Role <span className="text-red-500">*</span>
+            </label>
+            <select
+              name="role"
+              value={formData.role}
+              onChange={handleInputChange}
+              required
+              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
+            >
+              <option value="">Select a role</option>
+              {roles.map((role, index) => (
+                <option key={index} value={role}>
+                  {role}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="mb-4">
+            <label className="block font-semibold text-gray-600 mb-2">
+              Skills <span className="text-red-500">*</span>
+            </label>
+            <select
+              name="skills"
+              multiple
+              value={formData.skills}
+              onChange={handleSkillsChange}
+              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
+            >
+              {skillsOptions.map((skill, index) => (
+                <option key={index} value={skill}>
+                  {skill}
+                </option>
+              ))}
+            </select>
+            <p className="text-sm text-gray-500 mt-2">
+              Hold down the Ctrl (Windows) or Command (Mac) button to select multiple options.
+            </p>
+          </div>
+          <div className="mb-6">
+            <label className="block font-semibold text-gray-600 mb-2">
+              Contest ID <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              name="contest_id"
+              value={formData.contest_id}
+              onChange={handleInputChange}
+              required
+              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              placeholder="Enter Contest ID"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-lg font-semibold text-lg shadow-lg hover:shadow-xl transition duration-300 ease-in-out"
           >
-            <option value="">Select a role</option>
-            {roles.map((role, index) => (
-              <option key={index} value={role}>{role}</option>
-            ))}
-          </select>
-        </div>
-
-        <div className="mb-4">
-          <label className="block font-semibold text-gray-600 mb-2">Skills <span className="text-red-500">*</span></label>
-          <select
-            name="skills"
-            multiple
-            value={formData.skills}
-            onChange={handleSkillsChange}
-            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
-          >
-            {skillsOptions.map((skill, index) => (
-              <option key={index} value={skill}>{skill}</option>
-            ))}
-          </select>
-          <p className="text-sm text-gray-500 mt-2">Hold down the Ctrl (Windows) or Command (Mac) button to select multiple options.</p>
-        </div>
-
-        <div className="mb-6">
-          <label className="block font-semibold text-gray-600 mb-2">Contest ID <span className="text-red-500">*</span></label>
-          <input
-            type="text"
-            name="contest_id"
-            value={formData.contest_id}
-            onChange={handleInputChange}
-            required
-            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
-            placeholder="Enter Contest ID"
-          />
-        </div>
-
-        <button
-          onClick={handleSubmit}
-          className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-lg font-semibold text-lg shadow-lg hover:shadow-xl transition duration-300 ease-in-out"
-        >
-          Start Test
-        </button>
+            Start Test
+          </button>
+        </form>
       </div>
     </div>
   );
+  
 }
 
 export default CreateProfile;

@@ -12,9 +12,9 @@ temp_questions_collection = db['tempQuestions']
 final_questions_collection = db['finalQuestions']
 def fetch_Questions(request):
     """
-    Fetches questions from `tempQuestions`. If `tempQuestions` is empty,
-    it fetches questions from `Questions_Library`, stores them in `tempQuestions`, 
-    and then returns the questions from `tempQuestions`.
+    Fetches questions from tempQuestions. If tempQuestions is empty,
+    it fetches questions from Questions_Library, stores them in tempQuestions, 
+    and then returns the questions from tempQuestions.
     """
     # Check if tempQuestions is empty
     temp_count = temp_questions_collection.count_documents({})
@@ -55,7 +55,7 @@ def save_problem_data(new_problem):
         }
         
         # Convert the main document ID to ObjectId
-        main_document_id = ObjectId('6731ed9e1005131d602865de')
+        main_document_id = ObjectId('672dda1832100ee1f4a69fa1')
         existing_document = temp_questions_collection.find_one({'_id': main_document_id})
 
         if existing_document:
@@ -88,16 +88,16 @@ def save_problem_data(new_problem):
         }, status=400)
 
 
-@csrf_exempt 
+@csrf_exempt
 def publish_questions(request):
-    """
-    Moves questions from tempQuestions to finalQuestions with the contestId passed in the request body.
-    Clears FinalQuestions collection before copying and adds the contestId as a single document.
-    """
     if request.method == 'POST':
         try:
+            # Debugging: Log the raw request body
+            print("Raw request body:", request.body)
+
             # Parse JSON data from the request to get contestId
             data = json.loads(request.body)
+            print("Parsed request data:", data)  # Debugging line
             contest_id = data.get('contestId')
             print("Received contestId:", contest_id)  # Debugging line
 
@@ -126,7 +126,6 @@ def publish_questions(request):
 
         except Exception as e:
             print("Error publishing questions:", str(e))
-            traceback.print_exc()
             return JsonResponse({'error': 'Failed to publish questions'}, status=500)
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=405)
@@ -136,12 +135,12 @@ def publish_questions(request):
 @csrf_exempt
 def modify_problem_data(new_problem):
     """
-    Modifies an existing problem in `tempQuestions` based on its ID.
+    Modifies an existing problem in tempQuestions based on its ID.
     """
     try:
         problem_id = new_problem.get("id")
         result = temp_questions_collection.update_one(
-            {'problems.id': problem_id},  # Match within the `problems` array by `id`
+            {'problems.id': problem_id},  # Match within the problems array by id
             {'$set': {'problems.$': new_problem}}  # Update the matched problem
         )
         
@@ -158,10 +157,10 @@ def modify_problem_data(new_problem):
 
 def delete_problem_data(problem_id):
     """
-    Deletes a problem from `tempQuestions` based on its ID within the `problems` array.
+    Deletes a problem from tempQuestions based on its ID within the problems array.
     """
     try:
-        # Use `$pull` to remove the specific problem from the `problems` array
+        # Use $pull to remove the specific problem from the problems array
         result = temp_questions_collection.update_one(
             {},  # Assuming there's only one document; otherwise, specify a filter if needed
             {'$pull': {'problems': {'id': problem_id}}}
@@ -181,7 +180,7 @@ def delete_problem_data(problem_id):
 @csrf_exempt
 def save_problem(request):
     """
-    Handles saving, modifying, and deleting problems in `tempQuestions`.
+    Handles saving, modifying, and deleting problems in tempQuestions.
     """
     if request.method == 'GET':
         return fetch_Questions(request)

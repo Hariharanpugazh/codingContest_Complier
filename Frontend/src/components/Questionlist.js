@@ -10,7 +10,7 @@ function QuestionList() {
     // Fetch the data from the API
     const fetchQuestions = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:8000/questions/');
+        const response = await fetch('http://127.0.0.1:8000/AutoContest/');
         const data = await response.json();
         setQuestions(data.problems);
         setFilteredQuestions(data.problems);
