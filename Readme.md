@@ -1,4 +1,4 @@
-```markdown
+
 # Online Coding Contest Platform
 
 This project allows users to create and participate in online coding contests.
