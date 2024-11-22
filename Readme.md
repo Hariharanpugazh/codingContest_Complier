@@ -80,4 +80,4 @@ This project allows users to create and participate in online coding contests.
 - Make sure all dependencies are installed in their respective environments.
 
 Enjoy hosting and participating in coding contests! 🎉
-```
+
